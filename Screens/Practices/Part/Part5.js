@@ -1,7 +1,15 @@
-import React, { Component } from 'react';
-import { ActivityIndicator,ScrollView, FlatList,StyleSheet, Text, View } from 'react-native';
-import { Button, Card, CardItem,CheckBox } from 'native-base';
-import FitImage from 'react-native-fit-image';
+import React, { Component } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Card, CardItem, CheckBox } from "native-base";
+import FitImage from "react-native-fit-image";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part5URL = "http://nikaws.cf/getpart5/";
 
@@ -44,6 +52,8 @@ export default class Part5 extends Component {
     qes35One: false,
     qes35two: false,
     qes35three: false,
+
+    pointPast5: 0,
   };
   onePress() {
     this.setState({ one: true, two: false, three: false });
@@ -139,6 +149,9 @@ export default class Part5 extends Component {
         this.setState({ isLoading: false });
       });
   }
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
   checkAnswers = async () => {
     var c = [];
 
@@ -230,7 +243,14 @@ export default class Part5 extends Component {
     if (this.state.qes35three == true && c[23] == 1) {
       points = points + 1;
     }
-    alert("Đáp án đúng: " + points);
+
+    this.state.pointPast5 = points;
+
+    try {
+      await AsyncStorage.setItem("pointPast5", this.state.pointPast5 + "");
+    } catch (error) {
+      console.log(error);
+    }
   };
   render() {
     const { data, document, listPartDocumentArray, answers, isLoading } =
@@ -548,23 +568,6 @@ export default class Part5 extends Component {
                 </CardItem>
               </Card>
             </View>
-            <Button
-              rounded
-              light
-              style={{ width: "40%", alignItems: "center" }}
-              onPress={this.checkAnswers}
-            >
-              <Text
-                style={{
-                  color: "#efefef",
-                  margin: 5,
-                  marginLeft: "15%",
-                  marginRight: "15%",
-                }}
-              >
-                Tính điểm
-              </Text>
-            </Button>
           </View>
         )}
       </ScrollView>
@@ -573,11 +576,11 @@ export default class Part5 extends Component {
 }
 
 const styles = StyleSheet.create({
-    img: {
-        width: 64,
-        height: 64
-    },
-    fitImage: {
+  img: {
+    width: 64,
+    height: 64,
+  },
+  fitImage: {
     borderRadius: 5,
   },
   fitImageWithSize: {
@@ -585,11 +588,11 @@ const styles = StyleSheet.create({
     width: 170,
   },
   textAnswers: {
-    color:'#000',
-    fontSize:16
+    color: "#000",
+    fontSize: 16,
   },
   textTitle: {
-    color:'#000',
-    fontSize:18
-  }
-})
+    color: "#000",
+    fontSize: 18,
+  },
+});

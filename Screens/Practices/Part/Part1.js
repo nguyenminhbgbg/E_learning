@@ -1,20 +1,17 @@
-import { Row } from "native-base";
 import React, { Component } from "react";
 import {
   ActivityIndicator,
+  SafeAreaView,
   ScrollView,
-  Image,
   TextInput,
   FlatList,
   StyleSheet,
   Text,
   View,
-  Alert,
 } from "react-native";
-import { Button } from "native-base";
 
 import FitImage from "react-native-fit-image";
-import { AsyncStorage } from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part1URL = "http://nikaws.cf/getpart1/";
 export default class App extends Component {
@@ -27,35 +24,38 @@ export default class App extends Component {
       answers: [],
       isLoading: true,
 
+      tmp_answer: "",
+      office_answer: "",
+
       value1: "",
       value2: "",
       value3: "",
       value4: "",
       value5: "",
-      
-      answer1: "",
-      answer2: "",
-      answer3: "",
-      answer4: "",
-      answer5: "",
+
+      pointPast1: 0,
     };
   }
 
-  
   handelValue1 = (text) => {
-    this.setState({ value1: text });
+    let tmp_variable = this.state.tmp_answer[text.toUpperCase()];
+    this.setState({ value1: tmp_variable });
   };
   handelValue2 = (text) => {
-    this.setState({ value2: text });
+    let tmp_variable = this.state.tmp_answer[text.toUpperCase()];
+    this.setState({ value2: tmp_variable });
   };
-  handleValue3 = (text) => {
-    this.setState({ value3: text });
+  handelValue3 = (text) => {
+    let tmp_variable = this.state.tmp_answer[text.toUpperCase()];
+    this.setState({ value3: tmp_variable });
   };
-  handleValue4 = (text) => {
-    this.setState({ value4: text });
+  handelValue4 = (text) => {
+    let tmp_variable = this.state.tmp_answer[text.toUpperCase()];
+    this.setState({ value4: tmp_variable });
   };
-  handleValue5 = (text) => {
-    this.setState({ value5: text });
+  handelValue5 = (text) => {
+    let tmp_variable = this.state.tmp_answer[text.toUpperCase()];
+    this.setState({ value5: tmp_variable });
   };
 
   componentDidMount() {
@@ -66,20 +66,64 @@ export default class App extends Component {
         this.setState({ listPartDocumentArray: json.listPartDocumentArray });
         this.setState({ document: json.document });
         this.setState({ answers: json.answers });
+
+        let tmp_answer = [];
+        let office_answer = [];
+        let tmp_char = 65;
+        let tmp_index = 0;
+        // String.fromCharCode(65)
+        json.answers.forEach((element) => {
+          tmp_answer[String.fromCharCode(tmp_char)] = element.tailieu_id;
+          if (element.dapan === 1) {
+            office_answer[tmp_index] = element.tailieu_id;
+            ++tmp_index;
+          }
+          ++tmp_char;
+          // console.log(element.tailieu_id);
+        });
+        this.setState({
+          tmp_answer: tmp_answer,
+          office_answer: office_answer,
+        });
       })
       .catch((error) => console.error(error))
       .finally(() => {
         this.setState({ isLoading: false });
       });
   }
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
+  checkAnswers = async () => {
+    // console.log(this.state.tmp_answer);
+    // console.log(this.state.office_answer);
+    // console.log("Value 0 is " + this.state.value1);
+    // console.log("Value 1 is " + this.state.value2);
+    // console.log("Value 2 is " + this.state.value3);
+    // console.log("Value 3 is " + this.state.value4);
+    // console.log("Value 4 is " + this.state.value5);
+    let trueValue = 0;
 
-  
-  mergeUsers = async () => {
-    var x = 0;
-    if (this.state.value1 == this.state.answers[0].noidung_pa) {
-      alert("OKE");
-    } else {
-      alert("not OKE");
+    if (this.state.value1 === this.state.office_answer[0]) {
+      ++trueValue;
+    }
+    if (this.state.value2 === this.state.office_answer[1]) {
+      ++trueValue;
+    }
+    if (this.state.value3 === this.state.office_answer[2]) {
+      ++trueValue;
+    }
+    if (this.state.value4 === this.state.office_answer[3]) {
+      ++trueValue;
+    }
+    if (this.state.value5 === this.state.office_answer[4]) {
+      ++trueValue;
+    }
+    this.state.pointPast1 = trueValue;
+    try {
+      await AsyncStorage.setItem("pointPast1", this.state.pointPast1 + "");
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -87,11 +131,11 @@ export default class App extends Component {
     const { data, document, listPartDocumentArray, answers, isLoading } =
       this.state;
     return (
-      <ScrollView style={{ marginBottom: 20 }}>
+      <SafeAreaView  style={{ marginBottom: 20 }}>
         {isLoading ? (
           <ActivityIndicator />
         ) : (
-          <View>
+          <ScrollView >
             {/* img title past */}
             <View>
               <FlatList
@@ -149,8 +193,7 @@ export default class App extends Component {
                   data={document}
                   keyExtractor={({ id1 }, index1) => id1}
                   renderItem={({ item }) => (
-                  <View style={{flexDirection:'column'}}>
-                    
+                    <View style={{ flexDirection: "column" }}>
                       <View style={{ marginBottom: 5, marginTop: 5 }}>
                         <FitImage
                           indicator={false} // disable loading indicator
@@ -160,96 +203,80 @@ export default class App extends Component {
                           source={{ uri: "http://nikaws.cf/" + item.url }}
                         />
                       </View>
-                  </View>
+                    </View>
                   )}
                 />
               </View>
             </View>
-          </View>
+
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text style={{ fontSize: 20, color: "blue" }}>Điền đáp án:</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                }}
+              >
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 1</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={this.handelValue1}
+                  />
+                </View>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 2</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={this.handelValue2}
+                  />
+                </View>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 3</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={this.handelValue3}
+                  />
+                </View>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 4</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={this.handelValue4}
+                  />
+                </View>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 5</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={this.handelValue5}
+                  />
+                </View>
+                {/* //tạm thế  */}
+              </View>
+            </View>
+          </ScrollView>
         )}
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={{ fontSize: 20, color: "blue" }}>Điền đáp án:</Text>
-          <View
-            style={{
-              flexDirection: "row",
-            }}
-          >
-            <View>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 1</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={this.handelValue1}
-              />
-            </View>
-            <View>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 2</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={this.handelValue2}
-              />
-            </View>
-            <View>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 3</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={this.handelValue3}
-              />
-            </View>
-            <View>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 4</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={this.handelValue4}
-              />
-            </View>
-            <View>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 5</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={this.handelValue5}
-              />
-            </View>
-            {/* //tạm thế  */}
-          </View>
-        </View>
-        <Button
-          rounded
-          light
-          style={{ width: "40%", alignItems: "center" }}
-          onPress={this.mergeUsers}
-        >
-          <Text
-            style={{
-              color: "#efefef",
-              margin: 5,
-              marginLeft: "15%",
-              marginRight: "15%",
-            }}
-          >
-            Tính điểm
-          </Text>
-        </Button>
-      </ScrollView>
+      </SafeAreaView>
     );
   }
 }

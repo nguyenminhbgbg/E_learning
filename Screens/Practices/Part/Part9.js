@@ -9,9 +9,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { Button, Card, CardItem, CheckBox } from "native-base";
+import { Card, CardItem, CheckBox } from "native-base";
 import FitImage from "react-native-fit-image";
 import Sound from "react-native-sound";
+import AsyncStorage from "@react-native-community/async-storage";
 
 let sound1, sound2;
 
@@ -104,6 +105,8 @@ export default class Part9 extends Component {
     qes5One: false,
     qes5two: false,
     qes5three: false,
+
+    pointPast9: 0,
   };
   qes1OnePress() {
     this.setState({ qes1One: true, qes1two: false, qes1three: false });
@@ -169,6 +172,9 @@ export default class Part9 extends Component {
         this.setState({ isLoading: false });
       });
   }
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
   checkAnswers = async () => {
     var c = [];
 
@@ -233,7 +239,14 @@ export default class Part9 extends Component {
     if (this.state.qes5three == true && c[14] == 1) {
       points = points + 1;
     }
-    alert("Đáp án đúng: " + points);
+
+    this.state.pointPast9 = points;
+
+    try {
+      await AsyncStorage.setItem("pointPast9", this.state.pointPast9 + "");
+    } catch (error) {
+      console.log(error);
+    }
   };
   render() {
     const { data, document, listPartDocumentArray, answers, isLoading } =
@@ -280,7 +293,9 @@ export default class Part9 extends Component {
               <Card>
                 {/* cau 1 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>1. {data[0].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    1. {data[0].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <View
@@ -355,7 +370,9 @@ export default class Part9 extends Component {
 
                 {/* cau 2 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>2. {data[1].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    2. {data[1].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <View
@@ -430,7 +447,9 @@ export default class Part9 extends Component {
                 {/* cau 3 */}
 
                 <CardItem header>
-                  <Text style={styles.textTitle}>3. {data[2].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    3. {data[2].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <View
@@ -505,7 +524,9 @@ export default class Part9 extends Component {
 
                 {/* cau 4 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>4. {data[3].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    4. {data[3].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <View
@@ -580,7 +601,9 @@ export default class Part9 extends Component {
 
                 {/* cau 5 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>5. {data[4].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    5. {data[4].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <View
@@ -654,23 +677,6 @@ export default class Part9 extends Component {
                 </CardItem>
               </Card>
             </View>
-            <Button
-              rounded
-              light
-              style={{ width: "40%", alignItems: "center" }}
-              onPress={this.checkAnswers}
-            >
-              <Text
-                style={{
-                  color: "#efefef",
-                  margin: 5,
-                  marginLeft: "15%",
-                  marginRight: "15%",
-                }}
-              >
-                Tính điểm
-              </Text>
-            </Button>
           </View>
         )}
       </ScrollView>

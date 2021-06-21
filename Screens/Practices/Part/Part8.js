@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import FitImage from "react-native-fit-image";
-import { Button } from "native-base";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part8URL = "http://nikaws.cf/getpart8/";
 export default class App extends Component {
@@ -27,6 +27,8 @@ export default class App extends Component {
       value3: "",
       value4: "",
       value5: "",
+
+      pointPast8: 0,
     };
   }
   handelValue1 = (text) => {
@@ -59,24 +61,46 @@ export default class App extends Component {
         this.setState({ isLoading: false });
       });
   }
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
   checkAnswers = async () => {
     var result = 0;
-    if (this.state.value1 == this.state.answers[0].noidung_pa) {
-      result = result + 1;
+
+    var x = [];
+    var li = this.state.data.forEach((ques) => {
+      x.push(ques.id);
+    });
+    function Key(arr, b) {
+      var bx = b.filter(function (an) {
+        return an.cauhoi_id == arr;
+      });
+      return bx;
     }
-    if (this.state.value2 == this.state.answers[1].noidung_pa) {
-      result = result + 1;
+
+    function checkAnswer(answer, ListAns) {
+      var dat = ListAns.forEach(function (Li) {
+        if (answer == Li.noidung_pa) {
+          result++;
+        }
+      });
+      return dat;
     }
-    if (this.state.value3 == this.state.answers[2].noidung_pa) {
-      result = result + 1;
+
+    checkAnswer(this.state.value1, Key(x[0], this.state.answers));
+    checkAnswer(this.state.value2, Key(x[1], this.state.answers));
+    checkAnswer(this.state.value3, Key(x[2], this.state.answers));
+    checkAnswer(this.state.value4, Key(x[3], this.state.answers));
+    checkAnswer(this.state.value5, Key(x[4], this.state.answers));
+   
+
+    this.state.pointPast8 = result;
+
+    try {
+      await AsyncStorage.setItem("pointPast8", this.state.pointPast8 + "");
+    } catch (error) {
+      console.log(error);
     }
-    if (this.state.value4 == this.state.answers[3].noidung_pa) {
-      result = result + 1;
-    }
-    if (this.state.value5 == this.state.answers[4].noidung_pa) {
-      result = result + 1;
-    }
-    alert("Đáp án đúng: " + result);
   };
   render() {
     const { data, document, listPartDocumentArray, answers, isLoading } =
@@ -144,7 +168,7 @@ export default class App extends Component {
                 style={styles.inPutAnsew}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
-                onChangeText={this.handelValue3}
+                onChangeText={this.handleValue3}
               />
             </View>
             <View style={{ flexDirection: "row", marginBottom: 5 }}>
@@ -155,7 +179,7 @@ export default class App extends Component {
                 style={styles.inPutAnsew}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
-                onChangeText={this.handelValue4}
+                onChangeText={this.handleValue4}
               />
             </View>
             <View style={{ flexDirection: "row", marginBottom: 5 }}>
@@ -166,27 +190,10 @@ export default class App extends Component {
                 style={styles.inPutAnsew}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
-                onChangeText={this.handelValue5}
+                onChangeText={this.handleValue5}
               />
             </View>
           </View>
-          <Button
-            rounded
-            light
-            style={{ width: "40%", alignItems: "center" }}
-            onPress={this.checkAnswers}
-          >
-            <Text
-              style={{
-                color: "#efefef",
-                margin: 5,
-                marginLeft: "15%",
-                marginRight: "15%",
-              }}
-            >
-              Tính điểm
-            </Text>
-          </Button>
         </View>
       </ScrollView>
     );

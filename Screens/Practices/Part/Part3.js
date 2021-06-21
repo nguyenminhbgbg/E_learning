@@ -7,13 +7,9 @@ import {
   Text,
   View,
 } from "react-native";
-import {
-  Button,
-  Card,
-  CardItem,
-  CheckBox,
-} from "native-base";
+import { Card, CardItem, CheckBox } from "native-base";
 import FitImage from "react-native-fit-image";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part3URL = "http://nikaws.cf/getpart3.1/";
 
@@ -44,6 +40,8 @@ export default class Part3 extends Component {
     qes15One: false,
     qes15two: false,
     qes15three: false,
+
+    pointPast3: 0,
   };
   onePress() {
     this.setState({ one: true, two: false, three: false });
@@ -109,6 +107,9 @@ export default class Part3 extends Component {
         this.setState({ isLoading: false });
       });
   }
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
   checkAnswers = async () => {
     var c = [];
 
@@ -173,7 +174,14 @@ export default class Part3 extends Component {
     if (this.state.qes15three == true && c[14] == 1) {
       points = points + 1;
     }
-    alert("Đáp án đúng: " + points);
+
+    this.state.pointPast3 = points;
+
+    try {
+      await AsyncStorage.setItem("pointPast3", this.state.pointPast3 + "");
+    } catch (error) {
+      console.log(error);
+    }
   };
   render() {
     const { data, document, listPartDocumentArray, answers, isLoading } =
@@ -212,7 +220,9 @@ export default class Part3 extends Component {
               <Card>
                 {/* cau 11 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[0].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    11. {data[0].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -247,7 +257,9 @@ export default class Part3 extends Component {
 
                 {/* cau 12 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[1].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    12. {data[1].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -282,7 +294,9 @@ export default class Part3 extends Component {
                 {/* cau 13 */}
 
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[2].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    13. {data[2].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -317,7 +331,9 @@ export default class Part3 extends Component {
 
                 {/* cau 14 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[3].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    14. {data[3].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -352,7 +368,9 @@ export default class Part3 extends Component {
 
                 {/* cau 15 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[4].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    15. {data[4].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -386,23 +404,6 @@ export default class Part3 extends Component {
                 </CardItem>
               </Card>
             </View>
-            <Button
-              rounded
-              light
-              style={{ width: "40%", alignItems: "center" }}
-              onPress={this.checkAnswers}
-            >
-              <Text
-                style={{
-                  color: "#efefef",
-                  margin: 5,
-                  marginLeft: "15%",
-                  marginRight: "15%",
-                }}
-              >
-                Tính điểm
-              </Text>
-            </Button>
           </View>
         )}
       </ScrollView>

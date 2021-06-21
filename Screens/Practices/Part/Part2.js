@@ -7,8 +7,9 @@ import {
   Text,
   View,
 } from "react-native";
-import { Button, Card, CardItem, CheckBox } from "native-base";
+import { Card, CardItem, CheckBox } from "native-base";
 import FitImage from "react-native-fit-image";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part2URL = "http://nikaws.cf/getpart2/";
 
@@ -39,6 +40,8 @@ export default class Part2 extends Component {
     qes15One: false,
     qes15two: false,
     qes15three: false,
+
+    pointPast2: 0,
   };
   onePress() {
     this.setState({ one: true, two: false, three: false });
@@ -104,7 +107,9 @@ export default class Part2 extends Component {
         this.setState({ isLoading: false });
       });
   }
-
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
   checkAnswers = async () => {
     var c = [];
 
@@ -123,7 +128,7 @@ export default class Part2 extends Component {
     var points = 0;
 
     findDataDone(this.state.data, this.state.answers);
-    
+
     if (this.state.one == true && c[0] == 1) {
       points = points + 1;
     }
@@ -169,7 +174,14 @@ export default class Part2 extends Component {
     if (this.state.qes15three == true && c[14] == 1) {
       points = points + 1;
     }
-    alert("Đáp án đúng: " + points);
+
+    this.state.pointPast2 = points;
+
+    try {
+      await AsyncStorage.setItem("pointPast2", this.state.pointPast2 + "");
+    } catch (error) {
+      console.log(error);
+    }
   };
   render() {
     const { data, document, listPartDocumentArray, answers, isLoading } =
@@ -208,7 +220,9 @@ export default class Part2 extends Component {
               <Card>
                 {/* cau 11 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[0].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    6. {data[0].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -243,7 +257,9 @@ export default class Part2 extends Component {
 
                 {/* cau 12 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[1].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    7. {data[1].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -278,7 +294,9 @@ export default class Part2 extends Component {
                 {/* cau 13 */}
 
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[2].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    8. {data[2].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -311,9 +329,11 @@ export default class Part2 extends Component {
                   </Text>
                 </CardItem>
 
-                {/* cau 14 */}
+                {/* cau 9 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[3].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>
+                    9. {data[3].noidung_cauhoi}
+                  </Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -346,9 +366,9 @@ export default class Part2 extends Component {
                   </Text>
                 </CardItem>
 
-                {/* cau 15 */}
+                {/* cau 10 */}
                 <CardItem header>
-                  <Text style={styles.textTitle}>{data[4].noidung_cauhoi}</Text>
+                  <Text style={styles.textTitle}>10. {data[4].noidung_cauhoi}</Text>
                 </CardItem>
                 <CardItem Body>
                   <CheckBox
@@ -382,24 +402,6 @@ export default class Part2 extends Component {
                 </CardItem>
               </Card>
             </View>
-
-            <Button
-              rounded
-              light
-              style={{ width: "40%", alignItems: "center" }}
-              onPress={this.checkAnswers}
-            >
-              <Text
-                style={{
-                  color: "#efefef",
-                  margin: 5,
-                  marginLeft: "15%",
-                  marginRight: "15%",
-                }}
-              >
-                Tính điểm
-              </Text>
-            </Button>
           </View>
         )}
       </ScrollView>

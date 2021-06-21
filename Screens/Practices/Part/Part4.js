@@ -6,9 +6,11 @@ import {
   StyleSheet,
   Text,
   View,
+  Alert,
 } from "react-native";
 import { Button, Card, CardItem, CheckBox } from "native-base";
 import FitImage from "react-native-fit-image";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part4URL = "http://nikaws.cf/getpart4/";
 
@@ -47,6 +49,8 @@ export default class Part4 extends Component {
     qes27One: false,
     qes27two: false,
     qes27three: false,
+
+    pointPast4: 0,
   };
   onePress() {
     this.setState({ one: true, two: false, three: false });
@@ -132,6 +136,9 @@ export default class Part4 extends Component {
         this.setState({ isLoading: false });
       });
   }
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
   checkAnswers = async () => {
     var c = [];
 
@@ -214,7 +221,12 @@ export default class Part4 extends Component {
     if (this.state.qes27three == true && c[20] == 1) {
       points = points + 1;
     }
-    alert("Đáp án đúng: " + points);
+    this.state.pointPast4 = points;
+    try {
+      await AsyncStorage.setItem("pointPast4", this.state.pointPast4 + "");
+    } catch (error) {
+      console.log(error);
+    }
   };
   render() {
     const { data, document, listPartDocumentArray, answers, isLoading } =
@@ -509,27 +521,8 @@ export default class Part4 extends Component {
                     C: {answers[20].noidung_pa}
                   </Text>
                 </CardItem>
-
               </Card>
             </View>
-
-            <Button
-              rounded
-              light
-              style={{ width: "40%", alignItems: "center" }}
-              onPress={this.checkAnswers}
-            >
-              <Text
-                style={{
-                  color: "#efefef",
-                  margin: 5,
-                  marginLeft: "15%",
-                  marginRight: "15%",
-                }}
-              >
-                Tính điểm
-              </Text>
-            </Button>
           </View>
         )}
       </ScrollView>

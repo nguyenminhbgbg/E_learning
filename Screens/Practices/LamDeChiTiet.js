@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { Container, Header,Subtitle, Tab, Tabs, ScrollableTab, Left, Right, Icon, Button, Body ,Title } from 'native-base';
 import CountDown from 'react-native-countdown-component';
 
@@ -23,12 +23,25 @@ export default class LamDeChiTiet extends Component {
     super(props);
 
     this.state = {
-      isLoading: false,
+      isLoading: true,
     };
+  }
+  OnCheckAnswer = () => {
+    this.setState({ isLoading: false });
+    this.props.navigation.navigate("NopBaiTinhDiem");
+  };
+
+  componentDidMount() {
+    if (this.state.isLoading == true) {
+      setTimeout(() => {
+        this.setState({ isLoading: this.props.loading });
+      }, 500);
+    }
   }
   render() {
     const { isLoading } = this.state;
     const { idDe } = this.props.route.params;
+    const { loading } = this.props.route.params;
     return (
       <Container>
         <Header>
@@ -69,7 +82,7 @@ export default class LamDeChiTiet extends Component {
 
               <Button
                 primary
-                onPress={() => this.props.navigation.navigate("NopBaiTinhDiem")}
+                onPress={this.OnCheckAnswer}
               >
                 <Text style={{ fontSize: 16, color: "#fff" }}>NỘP BÀI</Text>
               </Button>
@@ -77,7 +90,12 @@ export default class LamDeChiTiet extends Component {
           </Right>
         </Header>
         {isLoading ? (
-          <ActivityIndicator />
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+            <Text>loading data!!!</Text>
+          </View>
         ) : (
           <Tabs renderTabBar={() => <ScrollableTab />}>
             <Tab heading="Part 1">

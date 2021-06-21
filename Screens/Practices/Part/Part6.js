@@ -1,9 +1,16 @@
-import { Row } from 'native-base';
-import React, { Component } from 'react';
-import { ActivityIndicator,ScrollView, TextInput, FlatList,StyleSheet, Text, View } from 'react-native';
-import FitImage from 'react-native-fit-image';
-import { Button } from "native-base";
-
+import { Row } from "native-base";
+import React, { Component } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  TextInput,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import FitImage from "react-native-fit-image";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part6URL = "http://nikaws.cf/getpart6/";
 export default class App extends Component {
@@ -20,6 +27,8 @@ export default class App extends Component {
       value3: "",
       value4: "",
       value5: "",
+
+      pointPast6: 0,
     };
   }
   handelValue1 = (text) => {
@@ -52,24 +61,49 @@ export default class App extends Component {
         this.setState({ isLoading: false });
       });
   }
+  componentDidUpdate() {
+    this.checkAnswers();
+  }
   checkAnswers = async () => {
     var result = 0;
-    if (this.state.value1 == this.state.answers[0].noidung_pa) {
+    if (
+      this.state.value1.toUpperCase() ==
+      this.state.answers[0].noidung_pa.toUpperCase()
+    ) {
       result = result + 1;
     }
-    if (this.state.value2 == this.state.answers[1].noidung_pa) {
+    if (
+      this.state.value2.toUpperCase() ==
+      this.state.answers[1].noidung_pa.toUpperCase()
+    ) {
       result = result + 1;
     }
-    if (this.state.value3 == this.state.answers[2].noidung_pa) {
+    if (
+      this.state.value3.toUpperCase() ==
+      this.state.answers[2].noidung_pa.toUpperCase()
+    ) {
       result = result + 1;
     }
-    if (this.state.value4 == this.state.answers[3].noidung_pa) {
+    if (
+      this.state.value4.toUpperCase() ==
+      this.state.answers[3].noidung_pa.toUpperCase()
+    ) {
       result = result + 1;
     }
-    if (this.state.value5 == this.state.answers[4].noidung_pa) {
+    if (
+      this.state.value5.toUpperCase() ==
+      this.state.answers[4].noidung_pa.toUpperCase()
+    ) {
       result = result + 1;
     }
-    alert('Đáp án đúng: ' + result);
+
+    this.state.pointPast6 = result;
+
+    try {
+      await AsyncStorage.setItem("pointPast6", this.state.pointPast6 + "");
+    } catch (error) {
+      console.log(error);
+    }
   };
   render() {
     const { data, document, listPartDocumentArray, answers, isLoading } =
@@ -166,18 +200,18 @@ export default class App extends Component {
                 style={styles.inPutAnsew}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
-                onChangeText={this.handelValue3}
+                onChangeText={this.handleValue3}
               />
             </View>
             <View style={{ flexDirection: "row", marginBottom: 5 }}>
               <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 38</Text>
+                <Text style={{ marginHorizontal: 10 }}>Câu 39</Text>
               </View>
               <TextInput
                 style={styles.inPutAnsew}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
-                onChangeText={this.handelValue4}
+                onChangeText={this.handleValue4}
               />
             </View>
             <View style={{ flexDirection: "row", marginBottom: 5 }}>
@@ -188,52 +222,34 @@ export default class App extends Component {
                 style={styles.inPutAnsew}
                 underlineColorAndroid="transparent"
                 autoCapitalize="none"
-                onChangeText={this.handelValue5}
+                onChangeText={this.handleValue5}
               />
             </View>
           </View>
-          <Button
-            rounded
-            light
-            style={{ width: "40%", alignItems: "center" }}
-            onPress={this.checkAnswers}
-          >
-            <Text
-              style={{
-                color: "#efefef",
-                margin: 5,
-                marginLeft: "15%",
-                marginRight: "15%",
-              }}
-            >
-              Tính điểm
-            </Text>
-          </Button>
         </View>
       </ScrollView>
     );
   }
-};
+}
 
 const styles = StyleSheet.create({
-    img: {
-        width: 64,
-        height: 64
-    },
-    fitImage: {
+  img: {
+    width: 64,
+    height: 64,
+  },
+  fitImage: {
     borderRadius: 5,
-
   },
   flexRow: {
-    flexDirection: 'row'
+    flexDirection: "row",
   },
   flexCol: {
-    flexDirection: 'column'
+    flexDirection: "column",
   },
   fitImageWithSize: {
     height: 50,
     width: "80%",
-    marginBottom:3
+    marginBottom: 3,
   },
   input: {
     height: 40,
@@ -241,20 +257,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   textQestion: {
-    color:'#000',
-    fontSize:16,
-    margin:5,
-    textAlign:'justify',
-    marginLeft:10
+    color: "#000",
+    fontSize: 16,
+    margin: 5,
+    textAlign: "justify",
+    marginLeft: 10,
   },
   inPutAnsew: {
-    textAlign:'center', 
+    textAlign: "center",
     height: 40,
-    minWidth:'70%', 
-    marginHorizontal:3, 
-    borderColor: 'gray', 
-    borderWidth: 1 , 
-    borderRadius:10, 
-    alignItems:'center'
-  }
-})
+    minWidth: "70%",
+    marginHorizontal: 3,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+});

@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import FitImage from "react-native-fit-image";
-import { Button } from "native-base";
+import AsyncStorage from "@react-native-community/async-storage";
 
 const Part7URL = "http://nikaws.cf/getpart7/";
 export default class App extends Component {
@@ -32,6 +32,8 @@ export default class App extends Component {
       value8: "",
       value9: "",
       value10: "",
+
+      pointPast7: 0,
     };
   }
   handelValue1 = (text) => {
@@ -66,37 +68,45 @@ export default class App extends Component {
   };
   checkAnswers = async () => {
     var result = 0;
-    if (this.state.value1 == this.state.answers[0].noidung_pa) {
-      result = result + 1;
+
+    var x = [];
+    var li = this.state.data.forEach((ques) => {
+      x.push(ques.id);
+    });
+    function Key(arr, b) {
+      var bx = b.filter(function (an) {
+        return an.cauhoi_id == arr;
+      });
+      return bx;
     }
-    if (this.state.value2 == this.state.answers[1].noidung_pa) {
-      result = result + 1;
+
+    function checkAnswer(answer, ListAns) {
+      var dat = ListAns.forEach(function (Li) {
+        if (answer == Li.noidung_pa) {
+          result++;
+        }
+      });
+      return dat;
     }
-    if (this.state.value3 == this.state.answers[2].noidung_pa) {
-      result = result + 1;
+
+    checkAnswer(this.state.value1, Key(x[0], this.state.answers));
+    checkAnswer(this.state.value2, Key(x[1], this.state.answers));
+    checkAnswer(this.state.value3, Key(x[2], this.state.answers));
+    checkAnswer(this.state.value4, Key(x[3], this.state.answers));
+    checkAnswer(this.state.value5, Key(x[4], this.state.answers));
+    checkAnswer(this.state.value6, Key(x[5], this.state.answers));
+    checkAnswer(this.state.value7, Key(x[6], this.state.answers));
+    checkAnswer(this.state.value8, Key(x[7], this.state.answers));
+    checkAnswer(this.state.value9, Key(x[8], this.state.answers));
+    checkAnswer(this.state.value10, Key(x[9], this.state.answers));
+
+    this.state.pointPast7 = result;
+
+    try {
+      await AsyncStorage.setItem("pointPast7", this.state.pointPast7 + "");
+    } catch (error) {
+      console.log(error);
     }
-    if (this.state.value4 == this.state.answers[3].noidung_pa) {
-      result = result + 1;
-    }
-    if (this.state.value5 == this.state.answers[4].noidung_pa) {
-      result = result + 1;
-    }
-    if (this.state.value6 == this.state.answers[5].noidung_pa) {
-      result = result + 1;
-    }
-    if (this.state.value7 == this.state.answers[6].noidung_pa) {
-      result = result + 1;
-    }
-    if (this.state.value8 == this.state.answers[7].noidung_pa) {
-      result = result + 1;
-    }
-    if (this.state.value9 == this.state.answers[8].noidung_pa) {
-      result = result + 1;
-    }
-    if (this.state.value10 == this.state.answers[9].noidung_pa) {
-      result = result + 1;
-    }
-    alert("Đáp án đúng: " + result);
   };
   componentDidMount() {
     fetch(Part7URL + this.props.maDe)
@@ -111,6 +121,9 @@ export default class App extends Component {
       .finally(() => {
         this.setState({ isLoading: false });
       });
+  }
+  componentDidUpdate() {
+    this.checkAnswers();
   }
 
   render() {
@@ -276,23 +289,6 @@ export default class App extends Component {
               </View>
             </View>
           </View>
-          <Button
-            rounded
-            light
-            style={{ width: "40%", alignItems: "center" }}
-            onPress={this.checkAnswers}
-          >
-            <Text
-              style={{
-                color: "#efefef",
-                margin: 5,
-                marginLeft: "15%",
-                marginRight: "15%",
-              }}
-            >
-              Tính điểm
-            </Text>
-          </Button>
         </View>
       </ScrollView>
     );
