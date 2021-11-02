@@ -39,7 +39,11 @@ export default class ListToppic extends Component {
                         paddingLeft:10,
                         paddingRight:10
                     }}>
+<<<<<<< HEAD
                         Let do it!!
+=======
+                        Bắt đầu!!
+>>>>>>> d8039d6 (11/12 commit)
                     </Text>
             </TouchableOpacity>
         )

@@ -1,181 +1,158 @@
-import React, { Component } from "react";
-import {
-  ActivityIndicator,
-  TouchableOpacity,
-  SafeAreaView,
-  ScrollView,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { Card, CardItem, CheckBox } from "native-base";
+import React, { useState, useEffect} from 'react';
+import { Container, Card, CardItem,CheckBox} from 'native-base';
+import { ScrollView,TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import FitImage from "react-native-fit-image";
-import Sound from "react-native-sound";
-import AsyncStorage from "@react-native-community/async-storage";
 
-let sound1, sound2;
+import { useSelector, useDispatch } from 'react-redux';
+import { savePointP9 , changeCleanP9 } from '../../../redux/actions';
+import Slider from '@react-native-community/slider';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const playSound = (item, index) => {
-  if (index == 0) {
-    sound1 = new Sound(item.url, (error, _sound) => {
-      if (error) {
-        alert("error" + error.message);
-        return;
-      }
-      sound1.play(() => {
-        sound1.release();
-      });
-    });
-  } else if (index == 1) {
-    sound2 = new Sound(item.url, "", (error, _sound) => {
-      if (error) {
-        alert("error" + error.message);
-        return;
-      }
-      sound2.play(() => {
-        sound2.release();
-      });
-    });
-  }
-};
-
-const stopSound = (_item, index) => {
-  if (index == 0 && sound1) {
-    sound1.stop(() => {
-      console.log("Stop");
-    });
-  } else if (index == 1 && sound2) {
-    sound2.stop(() => {
-      console.log("Stop");
-    });
-  }
-};
-const ItemView = (item, index) => {
-  return (
-    <View style={styles.feature} key={index}>
-      <Text style={styles.textStyle}>{item.title}</Text>
-      <TouchableOpacity onPress={() => playSound(item, index)}>
-        <Text style={styles.buttonPlay}>Play</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => stopSound(item, index)}>
-        <Text style={styles.buttonStop}>Stop</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-const audioList = [
-  {
-    title: "Bây giờ anh",
-    isRequire: true,
-    url: require("./bb.mp3"),
+var Sound = require('react-native-sound');
+Sound.setCategory('Playback');
+var audio = new Sound(
+  'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3',
+  null,
+  error => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+    // if loaded successfully
+    console.log(
+      'duration in seconds: ' +
+        audio.getDuration() +
+        'number of channels: ' +
+        audio.getNumberOfChannels(),
+    );
   },
-  {
-    title: "Play mp3 sound from remote URL",
-    url: "https://nikaws.cf/datafordb/CaWAccXCf10EeHi5e2kpFKvR1NGU3KlGUDepqNxT.mp3",
-  },
-];
-
-const Part9URL = "http://nikaws.cf/getpart9/";
-
-export default class Part9 extends Component {
-  state = {
-    data: [],
-    listPartDocumentArray: [],
-    document: [],
-    answers: [],
-    isLoading: true,
-
-    qes1One: false,
-    qes1two: false,
-    qes1three: false,
-
-    qes2One: false,
-    qes2two: false,
-    qes2three: false,
-
-    qes3One: false,
-    qes3two: false,
-    qes3three: false,
-
-    qes4One: false,
-    qes4two: false,
-    qes4three: false,
-
-    qes5One: false,
-    qes5two: false,
-    qes5three: false,
-
-    pointPast9: 0,
+);
+const Part9 = ({ route, navigation }) =>{
+  
+  const [playing, setPlaying] = useState();
+  const [currentTime, setCurrentTime] = useState(0);
+  
+  React.useEffect(() => {
+      const interval = setInterval(() => {
+          if (audio ) {
+              audio.getCurrentTime((seconds) => {
+                  setCurrentTime(seconds);
+              })
+          }
+      }, 100);
+      return () => clearInterval(interval);
+  });
+  useEffect(() => {
+    audio.setVolume(1);
+    return () => {
+      audio.release();
+    };
+  }, []);
+  const playPause = () => {
+    if (audio.isPlaying()) {
+      audio.pause();
+      setPlaying(false);
+    } else {
+      setPlaying(true);
+      audio.play(success => {
+        if (success) {
+          setPlaying(false);
+          console.log('successfully finished playing');
+        } else {
+          setPlaying(false);
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    }
   };
-  qes1OnePress() {
-    this.setState({ qes1One: true, qes1two: false, qes1three: false });
+  const dispatch = useDispatch();
+  const SavePointP9 = (point) => dispatch(savePointP9(point));
+  const ChangeCleanP9 = () => dispatch(changeCleanP9());
+  useEffect(() => {
+    if(cleanAnswerP9 == true){
+      ChangeCleanP9();
+    }
+  }, [cleanAnswerP9]);
+
+  const [qes1One, setQes1One] = useState(false);
+  const [qes1Two, setQes1Two] = useState(false);
+  const [qes1Three, setQes1Three] = useState(false);
+
+  const [qes2One, setQes2One] = useState(false);
+  const [qes2Two, setQes2Two] = useState(false);
+  const [qes2Three, setQes2Three] = useState(false);
+
+  const [qes3One, setQes3One] = useState(false);
+  const [qes3Two, setQes3Two] = useState(false);
+  const [qes3Three, setQes3Three] = useState(false);
+
+  const [qes4One, setQes4One] = useState(false);
+  const [qes4Two, setQes4Two] = useState(false);
+  const [qes4Three, setQes4Three] = useState(false);
+
+  const [qes5One, setQes5One] = useState(false);
+  const [qes5Two, setQes5Two] = useState(false);
+  const [qes5Three, setQes5Three] = useState(false);
+
+  const qes1OnePress = () => {
+    setQes1One(true); setQes1Two(false); setQes1Three(false)
   }
-  qes1twoPress() {
-    this.setState({ qes1One: false, qes1two: true, qes1three: false });
+  const qes1TwoPress = () => {
+    setQes1One(false); setQes1Two(true); setQes1Three(false)
   }
-  qes1threePress() {
-    this.setState({ qes1One: false, qes1two: false, qes1three: true });
+  const qes1ThreePress = () => {
+    setQes1One(false); setQes1Two(false); setQes1Three(true)
+  }
+  
+  const qes2OnePress = () => {
+    setQes2One(true); setQes2Two(false); setQes2Three(false)
+  }
+  const qes2TwoPress = () => {
+    setQes2One(false); setQes2Two(true); setQes2Three(false)
+  }
+  const qes2ThreePress = () => {
+    setQes2One(false); setQes2Two(false); setQes2Three(true)
   }
 
-  qes2OnePress() {
-    this.setState({ qes2One: true, qes2two: false, qes2three: false });
+  const qes3OnePress = () => {
+    setQes3One(true); setQes3Two(false); setQes3Three(false)
   }
-  qes2twoPress() {
-    this.setState({ qes2One: false, qes2two: true, qes2three: false });
+  const qes3TwoPress = () => {
+    setQes3One(false); setQes3Two(true); setQes3Three(false)
   }
-  qes2threePress() {
-    this.setState({ qes2One: false, qes2two: false, qes2three: true });
-  }
-
-  qes3OnePress() {
-    this.setState({ qes3One: true, qes3two: false, qes3three: false });
-  }
-  qes3twoPress() {
-    this.setState({ qes3One: false, qes3two: true, qes3three: false });
-  }
-  qes3threePress() {
-    this.setState({ qes3One: false, qes3two: false, qes3three: true });
+  const qes3ThreePress = () => {
+    setQes3One(false); setQes3Two(false); setQes3Three(true)
   }
 
-  qes4OnePress() {
-    this.setState({ qes4One: true, qes4two: false, qes4three: false });
+  const qes4OnePress = () => {
+    setQes4One(true); setQes4Two(false); setQes4Three(false)
   }
-  qes4twoPress() {
-    this.setState({ qes4One: false, qes4two: true, qes4three: false });
+  const qes4TwoPress = () => {
+    setQes4One(false); setQes4Two(true); setQes4Three(false)
   }
-  qes4threePress() {
-    this.setState({ qes4One: false, qes4two: false, qes4three: true });
-  }
-
-  qes5OnePress() {
-    this.setState({ qes5One: true, qes5two: false, qes5three: false });
-  }
-  qes5twoPress() {
-    this.setState({ qes5One: false, qes5two: true, qes5three: false });
-  }
-  qes5threePress() {
-    this.setState({ qes5One: false, qes5two: false, qes5three: true });
+  const qes4ThreePress = () => {
+    setQes4One(false); setQes4Two(false); setQes4Three(true)
   }
 
-  componentDidMount() {
-    fetch(Part9URL + this.props.maDe)
-      .then((response) => response.json())
-      .then((json) => {
-        this.setState({ data: json.questions });
-        this.setState({ listPartDocumentArray: json.listPartDocumentArray });
-        this.setState({ document: json.document });
-        this.setState({ answers: json.answers });
-      })
-      .catch((error) => console.error(error))
-      .finally(() => {
-        this.setState({ isLoading: false });
-      });
+  const qes5OnePress = () => {
+    setQes5One(true); setQes5Two(false); setQes5Three(false)
   }
-  componentDidUpdate() {
-    this.checkAnswers();
+  const qes5TwoPress = () => {
+    setQes5One(false); setQes5Two(true); setQes5Three(false)
   }
-  checkAnswers = async () => {
+  const qes5ThreePress = () => {
+    setQes5One(false); setQes5Two(false); setQes5Three(true)
+  }
+
+  useEffect(() => {
+    if(qes1One == true || qes2One == true || qes3One == true || qes4One == true || qes5One == true
+      || qes1Two == true || qes2Two == true || qes3Two == true || qes4Two == true || qes5Two == true
+      || qes1Three == true || qes2Three == true|| qes3Three == true|| qes4Three == true|| qes5Three == true ){
+      checkAnswers();
+    }
+  }, [qes1One,qes2One,qes3One, qes4One, qes5One, qes1Two, qes2Two, qes3Two, qes4Two, qes5Two,
+      qes1Three, qes2Three, qes3Three, qes4Three, qes5Three, part9]);
+  const checkAnswers = async () => {
     var c = [];
 
     function findDataDone(a, b) {
@@ -190,100 +167,104 @@ export default class Part9 extends Component {
         });
       });
     }
+
     var points = 0;
 
-    findDataDone(this.state.data, this.state.answers);
+    findDataDone(part9.questions, part9.answers);
 
-    if (this.state.qes1One == true && c[0] == 1) {
+    if (qes1One == true && c[0] == 1) {
       points = points + 1;
     }
-    if (this.state.qes1two == true && c[1] == 1) {
+    if (qes1Two == true && c[1] == 1) {
       points = points + 1;
     }
-    if (this.state.qes1three == true && c[2] == 1) {
+    if (qes1Three == true && c[2] == 1) {
       points = points + 1;
     }
-    if (this.state.qes2One == true && c[3] == 1) {
+    if (qes2One == true && c[3] == 1) {
       points = points + 1;
     }
-    if (this.state.qes2two == true && c[4] == 1) {
+    if (qes2Two == true && c[4] == 1) {
       points = points + 1;
     }
-    if (this.state.qes2three == true && c[5] == 1) {
+    if (qes2Three == true && c[5] == 1) {
       points = points + 1;
     }
-    if (this.state.qes3One == true && c[6] == 1) {
+    if (qes3One == true && c[6] == 1) {
       points = points + 1;
     }
-    if (this.state.qes3two == true && c[7] == 1) {
+    if (qes3Two == true && c[7] == 1) {
       points = points + 1;
     }
-    if (this.state.qes3three == true && c[8] == 1) {
+    if (qes3Three == true && c[8] == 1) {
       points = points + 1;
     }
-    if (this.state.qes4One == true && c[9] == 1) {
+    if (qes4One == true && c[9] == 1) {
       points = points + 1;
     }
-    if (this.state.qes4two == true && c[10] == 1) {
+    if (qes4Two == true && c[10] == 1) {
       points = points + 1;
     }
-    if (this.state.qes4three == true && c[11] == 1) {
+    if (qes4Three == true && c[11] == 1) {
       points = points + 1;
     }
-    if (this.state.qes5One == true && c[12] == 1) {
+    if (qes5One == true && c[12] == 1) {
       points = points + 1;
     }
-    if (this.state.qes5two == true && c[13] == 1) {
+    if (qes5Two == true && c[13] == 1) {
       points = points + 1;
     }
-    if (this.state.qes5three == true && c[14] == 1) {
+    if (qes5Three == true && c[14] == 1) {
       points = points + 1;
     }
-
-    this.state.pointPast9 = points;
-
-    try {
-      await AsyncStorage.setItem("pointPast9", this.state.pointPast9 + "");
-    } catch (error) {
-      console.log(error);
-    }
+    SavePointP9(points);
+    
   };
-  render() {
-    const { data, document, listPartDocumentArray, answers, isLoading } =
-      this.state;
-    return (
-      <ScrollView style={{ marginBottom: 20 }}>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <View>
-            {/* img title past */}
-            <View>
-              <FlatList
-                data={listPartDocumentArray}
-                keyExtractor={({ id1 }, index1) => id1}
-                renderItem={({ item }) => (
-                  <View style={{ marginBottom: 5, marginTop: 5 }}>
-                    <FitImage
-                      indicator={false} // disable loading indicator
-                      indicatorColor="white" // react native colors or color codes like #919191
-                      indicatorSize="integer" // (small | large) or integer
-                      style={styles.fitImage}
-                      source={{ uri: "http://nikaws.cf/" + item.url }}
-                    />
-                  </View>
-                )}
-              />
-            </View>
+  const {part9,soundP9, cleanAnswerP9 } = useSelector(state => state.mainReducer);
 
-            <SafeAreaView style={{ flex: 1 }}>
-              <View style={styles.container}>
-                <ScrollView style={{ flex: 1 }}>
-                  {audioList.map(ItemView)}
-                </ScrollView>
+  return (
+    <Container>
+        <ScrollView>
+          <Card>
+          <FitImage
+            indicator={false} // disable loading indicator
+            indicatorColor="white" // react native colors or color codes like #919191
+            indicatorSize="integer" // (small | large) or integer
+            style={styles.fitImage}
+            source={{
+              uri:`https://nikaws.cf/${
+                part9.listPartDocumentArray[1].url
+              }`
+          }}/>
+
+          <View style={styles.container}>
+              <View style={styles.progressBar}>
+                  <TouchableOpacity style={styles.playBtn} onPress={playPause}>
+                  <Ionicons
+                    name={playing ? 'ios-pause-outline' : 'ios-play-outline'}
+                    size={36}
+                    color={'#fff'}
+                  />
+                  </TouchableOpacity>
+                  <Text style={styles.progressBarText}>Time 0</Text>
+                      <Slider
+                          style={{width: '50%', height: 40}}
+                          minimumValue={0}
+                          maximumValue={audio.getDuration()}
+                          value={currentTime}
+                          minimumTrackTintColor="#FFFFFF"
+                          maximumTrackTintColor="gray"
+                          thumbTintColor='#FFFFFF'
+                          // onTouchStart={player.pause}
+                          // onTouchEnd={player.play}
+                          disabled={true}
+                          // onSlidingComplete={(seconds) => player.seekToTime(seconds)}
+                      />
+                    <Text style={styles.progressBarText}>Time 1</Text>
               </View>
-            </SafeAreaView>
-            <View
+          </View>
+          </Card>
+          <View
               style={{
                 flexDirection: "column",
                 alignContent: "center",
@@ -294,7 +275,7 @@ export default class Part9 extends Component {
                 {/* cau 1 */}
                 <CardItem header>
                   <Text style={styles.textTitle}>
-                    1. {data[0].noidung_cauhoi}
+                    1. {part9.questions[0].noidung_cauhoi}
                   </Text>
                 </CardItem>
                 <CardItem Body>
@@ -307,7 +288,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[0].url,
+                          uri: "http://nikaws.cf/" + part9.answers[0].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -316,10 +297,10 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes1One}
-                          onPress={() => this.qes1OnePress()}
-                          style={{ marginRight: 20 }}
+                        <CheckBox 
+                          checked={cleanAnswerP9 ? false : qes1One}
+                          onPress= {() => qes1OnePress()}
+                          style={{marginRight:20}}
                         />
                         <Text style={styles.textAnswers}>A</Text>
                       </View>
@@ -327,7 +308,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[1].url,
+                          uri: "http://nikaws.cf/" + part9.answers[1].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -336,10 +317,11 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes1two}
-                          onPress={() => this.qes1twoPress()}
-                          style={{ marginRight: 20 }}
+                        
+                        <CheckBox 
+                          checked={cleanAnswerP9 ? false : qes1Two}
+                          onPress= {() => qes1TwoPress()}
+                          style={{marginRight:20}}
                         />
                         <Text style={styles.textAnswers}>B</Text>
                       </View>
@@ -347,7 +329,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[2].url,
+                          uri: "http://nikaws.cf/" + part9.answers[2].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -357,10 +339,10 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes1three}
-                          onPress={() => this.qes1threePress()}
-                          style={{ marginRight: 20 }}
+                        <CheckBox 
+                          checked={cleanAnswerP9 ? false : qes1Three}
+                          onPress= {() => qes1ThreePress()}
+                          style={{marginRight:20}}
                         />
                         <Text style={styles.textAnswers}>C</Text>
                       </View>
@@ -371,7 +353,7 @@ export default class Part9 extends Component {
                 {/* cau 2 */}
                 <CardItem header>
                   <Text style={styles.textTitle}>
-                    2. {data[1].noidung_cauhoi}
+                    2. {part9.questions[1].noidung_cauhoi}
                   </Text>
                 </CardItem>
                 <CardItem Body>
@@ -384,7 +366,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[0].url,
+                          uri: "http://nikaws.cf/" + part9.answers[0].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -393,10 +375,10 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes2One}
-                          onPress={() => this.qes2OnePress()}
-                          style={{ marginRight: 20 }}
+                        <CheckBox 
+                          checked={cleanAnswerP9 ? false : qes2One}
+                          onPress= {() => qes2OnePress()}
+                          style={{marginRight:20}}
                         />
                         <Text style={styles.textAnswers}>A</Text>
                       </View>
@@ -404,7 +386,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[1].url,
+                          uri: "http://nikaws.cf/" + part9.answers[1].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -413,18 +395,18 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes2two}
-                          onPress={() => this.qes2twoPress()}
-                          style={{ marginRight: 20 }}
-                        />
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes2Two}
+                        onPress= {() => qes2TwoPress()}
+                        style={{marginRight:20}}
+                      />
                         <Text style={styles.textAnswers}>B</Text>
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[2].url,
+                          uri: "http://nikaws.cf/" + part9.answers[2].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -434,11 +416,11 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes2three}
-                          onPress={() => this.qes2threePress()}
-                          style={{ marginRight: 20 }}
-                        />
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes2Three}
+                        onPress= {() => qes2ThreePress()}
+                        style={{marginRight:20}}
+                      />
                         <Text style={styles.textAnswers}>C</Text>
                       </View>
                     </View>
@@ -448,7 +430,7 @@ export default class Part9 extends Component {
 
                 <CardItem header>
                   <Text style={styles.textTitle}>
-                    3. {data[2].noidung_cauhoi}
+                    3. {part9.questions[2].noidung_cauhoi}
                   </Text>
                 </CardItem>
                 <CardItem Body>
@@ -461,7 +443,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[3].url,
+                          uri: "http://nikaws.cf/" + part9.answers[3].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -470,18 +452,18 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes3One}
-                          onPress={() => this.qes3OnePress()}
-                          style={{ marginRight: 20 }}
-                        />
-                        <Text style={styles.textAnswers}>A</Text>
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes3One}
+                        onPress= {() => qes3OnePress()}
+                        style={{marginRight:20}}
+                      />
+                      <Text style={styles.textAnswers}>A</Text>
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[4].url,
+                          uri: "http://nikaws.cf/" + part9.answers[4].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -490,18 +472,18 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes3two}
-                          onPress={() => this.qes3twoPress()}
-                          style={{ marginRight: 20 }}
-                        />
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes3Two}
+                        onPress= {() => qes3TwoPress()}
+                        style={{marginRight:20}}
+                      />
                         <Text style={styles.textAnswers}>B</Text>
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[5].url,
+                          uri: "http://nikaws.cf/" + part9.answers[5].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -511,12 +493,12 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes3three}
-                          onPress={() => this.qes3threePress()}
-                          style={{ marginRight: 20 }}
-                        />
-                        <Text style={styles.textAnswers}>C</Text>
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes3Three}
+                        onPress= {() => qes3ThreePress()}
+                        style={{marginRight:20}}
+                      />
+                      <Text style={styles.textAnswers}>C</Text>
                       </View>
                     </View>
                   </View>
@@ -525,7 +507,7 @@ export default class Part9 extends Component {
                 {/* cau 4 */}
                 <CardItem header>
                   <Text style={styles.textTitle}>
-                    4. {data[3].noidung_cauhoi}
+                    4. {part9.questions[3].noidung_cauhoi}
                   </Text>
                 </CardItem>
                 <CardItem Body>
@@ -538,7 +520,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[6].url,
+                          uri: "http://nikaws.cf/" + part9.answers[6].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -547,18 +529,18 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes4One}
-                          onPress={() => this.qes4OnePress()}
-                          style={{ marginRight: 20 }}
-                        />
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes4One}
+                        onPress= {() => qes4OnePress()}
+                        style={{marginRight:20}}
+                      />
                         <Text style={styles.textAnswers}>A</Text>
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[7].url,
+                          uri: "http://nikaws.cf/" + part9.answers[7].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -567,18 +549,18 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes4two}
-                          onPress={() => this.qes4twoPress()}
-                          style={{ marginRight: 20 }}
-                        />
-                        <Text style={styles.textAnswers}>B</Text>
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes4Two}
+                        onPress= {() => qes4TwoPress()}
+                        style={{marginRight:20}}
+                      />
+                      <Text style={styles.textAnswers}>B</Text>
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[8].url,
+                          uri: "http://nikaws.cf/" + part9.answers[8].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -588,12 +570,12 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes4three}
-                          onPress={() => this.qes4threePress()}
-                          style={{ marginRight: 20 }}
-                        />
-                        <Text style={styles.textAnswers}>C</Text>
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes4Three}
+                        onPress= {() => qes4ThreePress()}
+                        style={{marginRight:20}}
+                      />
+                      <Text style={styles.textAnswers}>C</Text>
                       </View>
                     </View>
                   </View>
@@ -602,7 +584,7 @@ export default class Part9 extends Component {
                 {/* cau 5 */}
                 <CardItem header>
                   <Text style={styles.textTitle}>
-                    5. {data[4].noidung_cauhoi}
+                    5. {part9.questions[4].noidung_cauhoi}
                   </Text>
                 </CardItem>
                 <CardItem Body>
@@ -615,7 +597,7 @@ export default class Part9 extends Component {
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[9].url,
+                          uri: "http://nikaws.cf/" + part9.answers[9].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -624,18 +606,18 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes5One}
-                          onPress={() => this.qes5OnePress()}
-                          style={{ marginRight: 20 }}
-                        />
-                        <Text style={styles.textAnswers}>A</Text>
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes5One}
+                        onPress= {() => qes5OnePress()}
+                        style={{marginRight:20}}
+                      />
+                      <Text style={styles.textAnswers}>A</Text>
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[10].url,
+                          uri: "http://nikaws.cf/" + part9.answers[10].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -644,18 +626,18 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes5two}
-                          onPress={() => this.qes5twoPress()}
-                          style={{ marginRight: 20 }}
-                        />
-                        <Text style={styles.textAnswers}>B</Text>
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes5Two}
+                        onPress= {() => qes5TwoPress()}
+                        style={{marginRight:20}}
+                      />
+                      <Text style={styles.textAnswers}>B</Text>
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
                       <FitImage
                         source={{
-                          uri: "http://nikaws.cf/" + document[11].url,
+                          uri: "http://nikaws.cf/" + part9.answers[11].url,
                         }}
                         style={styles.fitImageWithSize}
                       />
@@ -665,11 +647,11 @@ export default class Part9 extends Component {
                           flexDirection: "row",
                         }}
                       >
-                        <CheckBox
-                          checked={this.state.qes5three}
-                          onPress={() => this.qes5threePress()}
-                          style={{ marginRight: 20 }}
-                        />
+                      <CheckBox 
+                        checked={cleanAnswerP9 ? false : qes5Three}
+                        onPress= {() => qes5ThreePress()}
+                        style={{marginRight:20}}
+                      />
                         <Text style={styles.textAnswers}>C</Text>
                       </View>
                     </View>
@@ -677,14 +659,67 @@ export default class Part9 extends Component {
                 </CardItem>
               </Card>
             </View>
-          </View>
-        )}
-      </ScrollView>
-    );
-  }
+        </ScrollView>
+    </Container>
+  );
 }
 
 const styles = StyleSheet.create({
+  container: {
+      flex:1,
+      justifyContent:'center',
+      backgroundColor:'#3c444c',
+      borderRadius:50
+  },
+  name: {
+      color: 'white',
+  },
+  progressBar: {
+      flexDirection: 'row',
+      marginVertical:15,
+      marginHorizontal:15,
+      alignItems: 'center'
+  },
+  progressBarText: {
+      color: 'white',
+      alignSelf: 'center',
+  },
+  speed: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 50,
+  },
+  speedItem: {
+      width: 50,
+  },
+  actionButtons: {
+      
+  },
+  actionButtonsOther: {
+      flexDirection:'row',
+      justifyContent:'center',
+  },
+  pauseOrPlayButton: {
+      marginRight: 10,
+      marginLeft: 10,
+      width: 50,
+  },
+  actionButtonsOtherTimeDown: {
+      // left: -35,
+  },
+  actionButtonsOtherTimeUp: {
+      // width: 40,
+  },
+  changeAudio: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent:'center',
+  },
+  button: {
+      justifyContent: 'center',
+  },
   img: {
     width: 64,
     height: 64,
@@ -718,33 +753,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 5,
   },
-  buttonPlay: {
-    fontSize: 16,
-    color: "white",
-    backgroundColor: "rgba(00,80,00,1)",
-    borderWidth: 1,
-    borderColor: "rgba(80,80,80,0.5)",
-    overflow: "hidden",
-    paddingHorizontal: 15,
-    paddingVertical: 7,
-  },
-  buttonStop: {
-    fontSize: 16,
-    color: "white",
-    backgroundColor: "rgba(80,00,00,1)",
-    borderWidth: 1,
-    borderColor: "rgba(80,80,80,0.5)",
-    overflow: "hidden",
-    paddingHorizontal: 15,
-    paddingVertical: 7,
-  },
-  feature: {
-    flexDirection: "row",
-    padding: 5,
-    marginTop: 7,
-    alignSelf: "stretch",
-    alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: "rgb(180,180,180)",
+  playBtn: {
+    padding: 15,
   },
 });
+
+export default Part9;

@@ -9,6 +9,7 @@ import {
   Button,
   Title,
 } from "native-base";
+<<<<<<< HEAD
 import AsyncStorage from "@react-native-community/async-storage";
 
 export default function NopBaiTinhDiem({ navigation }) {
@@ -196,6 +197,20 @@ export default function NopBaiTinhDiem({ navigation }) {
       console.log(error);
     }
   };
+=======
+
+import { useSelector, useDispatch } from 'react-redux';
+import { clearPointAllPart  } from '../../redux/actions';
+
+export default function NopBaiTinhDiem({ navigation }) {
+
+  const dispatch = useDispatch();
+  const ClearPointAllPart = () => dispatch(clearPointAllPart());
+
+  const {pointPart1 ,pointPart2 ,pointPart3p1, pointPart3p2, pointPart4, pointPart5, pointPart6, 
+    pointPart7, pointPart8, pointPart9, pointPart10, pointPart11, pointPart12, pointPart13 
+   } = useSelector(state => state.mainReducer);
+>>>>>>> d8039d6 (11/12 commit)
 
   return (
     <Container>
@@ -210,6 +225,7 @@ export default function NopBaiTinhDiem({ navigation }) {
           <Text style={styles.text}>Nộp bài tính điểm hộ t</Text>
         </View>
         <View style={{ marginLeft: 10, margin: 5 }}>
+<<<<<<< HEAD
           <Text style={styles.text}>Past 1: {past1}/5</Text>
           <Text style={styles.text}>Past 2: {past2}/5 </Text>
           <Text style={styles.text}>Past 3p1: {past3}/5 </Text>
@@ -224,6 +240,22 @@ export default function NopBaiTinhDiem({ navigation }) {
           <Text style={styles.text}>Past 11: {past11}/5 </Text>
           <Text style={styles.text}>Past 12: {past12}/5 </Text>
           <Text style={styles.text}>Past 13: {past13}/5 </Text>
+=======
+          <Text style={styles.text}>Past 1: {pointPart1}/5</Text>
+          <Text style={styles.text}>Past 2: {pointPart2}/5 </Text>
+          <Text style={styles.text}>Past 3p1: {pointPart3p1}/5 </Text>
+          <Text style={styles.text}>Past 3p2: {pointPart3p2}/5 </Text>
+          <Text style={styles.text}>Past 4: {pointPart4}/7 </Text>
+          <Text style={styles.text}>Past 5: {pointPart5}/8 </Text>
+          <Text style={styles.text}>Past 6: {pointPart6}/5 </Text>
+          <Text style={styles.text}>Past 7: {pointPart7}/10 </Text>
+          <Text style={styles.text}>Past 8: {pointPart8}/5 </Text>
+          <Text style={styles.text}>Past 9: {pointPart9}/5 </Text>
+          <Text style={styles.text}>Past 10: {pointPart10}/5 </Text>
+          <Text style={styles.text}>Past 11: {pointPart11}/5 </Text>
+          <Text style={styles.text}>Past 12: {pointPart12}/5 </Text>
+          <Text style={styles.text}>Past 13: {pointPart13}/5 </Text>
+>>>>>>> d8039d6 (11/12 commit)
         </View>
 
         <View style={styles.container1}>
@@ -231,7 +263,11 @@ export default function NopBaiTinhDiem({ navigation }) {
             rounded
             light
             style={{ width: "40%", alignItems: "center" }}
+<<<<<<< HEAD
             onPress={removeData}
+=======
+            onPress={() => (ClearPointAllPart(), navigation.navigate("HomeScreen"))}
+>>>>>>> d8039d6 (11/12 commit)
           >
             <Text
               style={{

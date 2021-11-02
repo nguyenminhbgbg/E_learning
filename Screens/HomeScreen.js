@@ -26,6 +26,7 @@ function HomeScreen({ navigation }) {
 
                    <View style={{
                        flexDirection:"row",
+<<<<<<< HEAD
                        alignItems:"center",
                        backgroundColor:"#FFF",
                        padding:10,
@@ -50,6 +51,8 @@ function HomeScreen({ navigation }) {
                    </View>
                    <View style={{
                        flexDirection:"row",
+=======
+>>>>>>> d8039d6 (11/12 commit)
                        backgroundColor:"#FFF2F2",
                        marginTop:25,
                        marginHorizontal:20,
@@ -97,6 +100,7 @@ function HomeScreen({ navigation }) {
                        />
 
                    </View>
+<<<<<<< HEAD
                    <Text style={{
                        color:"#345c74",
                        fontFamily:"Bold",
@@ -106,6 +110,8 @@ function HomeScreen({ navigation }) {
                        marginBottom:10
                    }}>Have a nice day bro!!!</Text>
 
+=======
+>>>>>>> d8039d6 (11/12 commit)
                </ScrollView>
            </ImageBackground>
   );

@@ -15,12 +15,22 @@ const TabNa = createMaterialBottomTabNavigator();
 
 const LearningDetail = () => (
     <TabNa.Navigator
+<<<<<<< HEAD
       initialRouteName="Learning"
       activeColor="#fff"
     >
       <TabNa.Screen
         name="Learning"
         component={LearningStackScreen}
+=======
+      initialRouteName="LearningDetail"
+      activeColor="#fff"
+      barStyle={{ backgroundColor: '#d1a0a7' }}
+    >
+      <TabNa.Screen
+        name="Learning"
+        component={Learning}
+>>>>>>> d8039d6 (11/12 commit)
         options={{
           tabBarLabel: 'Learning Theory',
           tabBarColor: '#d1a0a7',
@@ -33,7 +43,11 @@ const LearningDetail = () => (
       />
       <TabNa.Screen
         name="LearningExample"
+<<<<<<< HEAD
         component={LearningExampleStackScreen}
+=======
+        component={LearningExample}
+>>>>>>> d8039d6 (11/12 commit)
         options={{
           tabBarLabel: 'Example',
           tabBarColor: '#d1a0a7',
