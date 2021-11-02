@@ -1,8 +1,11 @@
 import React from 'react';
 import { View, Text,ImageBackground,TouchableOpacity, Button, StyleSheet } from 'react-native';
+<<<<<<< HEAD
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+=======
+>>>>>>> d8039d6 (11/12 commit)
 function SettingScreen({ navigation }) {
   return (
     <ImageBackground

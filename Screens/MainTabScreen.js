@@ -19,13 +19,21 @@ const MainTabScreen = () => (
     <Tab.Navigator
       initialRouteName="Home"
       activeColor="#fff"
+<<<<<<< HEAD
+=======
+      barStyle={{ backgroundColor: '#d1a0a7' }}
+>>>>>>> d8039d6 (11/12 commit)
     >
       <Tab.Screen
         name="Home"
         component={HomeStackScreen}
         options={{
+<<<<<<< HEAD
           tabBarLabel: 'Home',
           tabBarColor: '#d1a0a7',
+=======
+          tabBarLabel: 'Trang Chủ',
+>>>>>>> d8039d6 (11/12 commit)
           tabBarIcon: ({ color }) => (
             <Icon name="ios-apps" color={color} size={18} />
           ),
@@ -35,8 +43,12 @@ const MainTabScreen = () => (
         name="StudyEnglish"
         component={DetailsStackScreen}
         options={{
+<<<<<<< HEAD
           tabBarLabel: 'Study English',
           tabBarColor: '#d1a0a7',
+=======
+          tabBarLabel: 'Lý Thuyết',
+>>>>>>> d8039d6 (11/12 commit)
           tabBarIcon: ({ color }) => (
             <Icon name="ios-book" color={color} size={18} />
           ),
@@ -46,14 +58,22 @@ const MainTabScreen = () => (
         name="PracticeExam"
         component={ProfileStackScreen}
         options={{
+<<<<<<< HEAD
           tabBarLabel: 'Practice Exam',
           tabBarColor: '#d1a0a7',
+=======
+          tabBarLabel: 'Luyển Đề',
+>>>>>>> d8039d6 (11/12 commit)
           tabBarIcon: ({ color }) => (
             <Icon name="ios-heart-sharp" color={color} size={18} />
           ),
         }}
       />
+<<<<<<< HEAD
       <Tab.Screen
+=======
+      {/* <Tab.Screen
+>>>>>>> d8039d6 (11/12 commit)
         name="Settings"
         component={ExploreStackScreen}
         options={{
@@ -63,12 +83,17 @@ const MainTabScreen = () => (
             <Icon name="ios-infinite" color={color} size={18} />
           ),
         }}
+<<<<<<< HEAD
       />
+=======
+      /> */}
+>>>>>>> d8039d6 (11/12 commit)
     </Tab.Navigator>
 );
 
 export default MainTabScreen;
 
+<<<<<<< HEAD
 const ExploreStackScreen = ({navigation}) => (
 <HomeStack.Navigator screenOptions={{
         headerStyle: {
@@ -87,6 +112,26 @@ const ExploreStackScreen = ({navigation}) => (
         }} />
 </HomeStack.Navigator>
 );
+=======
+// const ExploreStackScreen = ({navigation}) => (
+// <HomeStack.Navigator screenOptions={{
+//         headerStyle: {
+//         backgroundColor: '#d1a0a7',
+//         },
+//         headerTintColor: '#fff',
+//         headerTitleStyle: {
+//         fontWeight: 'bold'
+//         }
+//     }}>
+//         <HomeStack.Screen name="Settings" component={SettingScreen} options={{
+//         title:'Settings',
+//         headerLeft: () => (
+//             <Icon.Button name="ios-menu" size={25} backgroundColor="#d1a0a7" onPress={() => navigation.openDrawer()}></Icon.Button>
+//         )
+//         }} />
+// </HomeStack.Navigator>
+// );
+>>>>>>> d8039d6 (11/12 commit)
 const ProfileStackScreen = ({navigation}) => (
 <HomeStack.Navigator screenOptions={{
         headerStyle: {

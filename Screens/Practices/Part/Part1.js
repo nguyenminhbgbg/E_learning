@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { Component } from "react";
+=======
+import React, { useEffect } from "react";
+>>>>>>> d8039d6 (11/12 commit)
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -8,6 +12,7 @@ import {
   StyleSheet,
   Text,
   View,
+<<<<<<< HEAD
 } from "react-native";
 
 import FitImage from "react-native-fit-image";
@@ -150,10 +155,172 @@ export default class App extends Component {
                       style={styles.fitImage}
                       source={{ uri: "http://nikaws.cf/" + item.url }}
                     />
+=======
+} from "react-native";  
+import FitImage from "react-native-fit-image";
+
+import { useSelector, useDispatch } from 'react-redux';
+import { savePointP1, changeCleanP1  } from '../../../redux/actions';
+
+const Part1 = ({ navigation }) => {
+  
+    const {part1,listP1 , quesP1, ansP1,cleanAnswerP1 } = useSelector(state => state.mainReducer);
+    const dispatch = useDispatch();
+    const SavePointP1 = (point) => dispatch(savePointP1(point));
+    const ChangeCleanP1 = () => dispatch(changeCleanP1());
+
+    const [listPartDocumentArray, setListPartDocumentArray] = React.useState([]);
+    const [questions, setQuestions] = React.useState([]);
+    const [answers, setAnswers] = React.useState([]);
+
+    const [office_answer, SetOffice_answer] = React.useState("");
+
+    const [value1, setValue1] = React.useState("");
+    const [value2, setValue2] = React.useState("");
+    const [value3, setValue3] = React.useState("");
+    const [value4, setValue4] = React.useState("");
+    const [value5, setValue5] = React.useState("");
+
+    useEffect(() => {
+      setListPartDocumentArray(listP1);
+      setQuestions(quesP1);
+      setAnswers(ansP1);
+      if(cleanAnswerP1 == true){
+        ChangeCleanP1();
+      }
+    }, [part1, cleanAnswerP1]);
+
+      useEffect(() => {
+        let office_answer = [];
+        let tmp_char = 65;
+
+        // String.fromCharCode(65)
+        answers.forEach((element) => {
+          if (element.dapan === 1) {
+            office_answer.push(String.fromCharCode(tmp_char));
+          }
+          ++tmp_char;
+        });
+        SetOffice_answer(office_answer);
+        if(value1!= "" || value2 !="" || value3!= "" || value4 != "" || value5 != "" ){
+          checkAnswers();
+        }
+      }, [value1,value2,value3,value4,value5]);
+
+      const checkAnswers = () => {
+
+        let trueValue = 0;
+    
+        if (value1.toUpperCase() === office_answer[0]) {
+          ++trueValue;
+        }
+        if (value2.toUpperCase() === office_answer[1]) {
+          ++trueValue;
+        }
+        if (value3.toUpperCase() === office_answer[2]) {
+          ++trueValue;
+        }
+        if (value4.toUpperCase() === office_answer[3]) {
+          ++trueValue;
+        }
+        if (value5.toUpperCase() === office_answer[4]) {
+          ++trueValue;
+        }
+        SavePointP1(trueValue);
+
+      };
+
+    const handelValue1 = (text) => {
+        setValue1(text)
+    }
+    const handelValue2 = (text) => {
+        setValue2(text)
+    };
+    const handelValue3 = (text) => {
+        setValue3(text)
+    };
+    const handelValue4 = (text) => {
+        setValue4(text)
+    };
+    const handelValue5 = (text) => {
+        setValue5(text)
+    };
+
+    return (
+      <SafeAreaView  style={{ marginBottom: 20 }}>
+        <ScrollView >
+          {/* img title past */}
+          <View>
+            <FlatList
+              data={listPartDocumentArray}
+              keyExtractor={({ id1 }, index1) => id1}
+              renderItem={({ item }) => (
+                <View style={{ marginBottom: 5, marginTop: 5 }}>
+                  <FitImage
+                    indicator={false} // disable loading indicator
+                    indicatorColor="white" // react native colors or color codes like #919191
+                    style={styles.fitImage}
+                    source={{ uri: "http://nikaws.cf/" + item.url }}
+                  />
+                </View>
+              )}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {/* List questionsP1 left */}
+            <View
+              style={{
+                flexDirection: "column",
+                maxWidth: "45%",
+                minWidth: "44%",
+              }}
+            >
+              <FlatList
+                data={questions}
+                keyExtractor={({ id }, index) => id}
+                renderItem={({ item }) => (
+                  <View>
+                    <Text style={styles.textQestion}>
+                      {" "}
+                      {item.noidung_cauhoi}
+                    </Text>
                   </View>
                 )}
               />
             </View>
+            {/* List documentP1 right*/}
+            <View
+              style={{
+                maxWidth: "50%",
+                minWidth: "49%",
+              }}
+            >
+              <FlatList
+                data={ answers }
+                keyExtractor={({ id1 }, index1) => id1}
+                renderItem={({ item }) => (
+                  <View style={{ flexDirection: "column" }}>
+                    <View style={{ marginBottom: 5, marginTop: 5 }}>
+                      <FitImage
+                        indicator={false} // disable loading indicator
+                        indicatorColor="white" // react native colors or color codes like #919191
+                        indicatorSize="integer" // (small | large) or integer
+                        style={styles.fitImage}
+                        source={{ uri: "http://nikaws.cf/" + item.url }}
+                      />
+                    </View>
+>>>>>>> d8039d6 (11/12 commit)
+                  </View>
+                )}
+              />
+            </View>
+<<<<<<< HEAD
             <View
               style={{
                 flexDirection: "row",
@@ -280,6 +447,85 @@ export default class App extends Component {
     );
   }
 }
+=======
+          </View>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <Text style={{ fontSize: 20, color: "blue" }}>Điền đáp án:</Text>
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <View>
+                <View style={{ margin: 5 }}>
+                  <Text style={{ marginHorizontal: 10 }}>Câu 1</Text>
+                </View>
+                <TextInput
+                  style={styles.inPutAnsew}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                  onChangeText= {handelValue1}
+                  value={cleanAnswerP1 ? "" : null}
+                />
+              </View>
+              <View>
+                <View style={{ margin: 5 }}>
+                  <Text style={{ marginHorizontal: 10 }}>Câu 2</Text>
+                </View>
+                <TextInput
+                  style={styles.inPutAnsew}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                  onChangeText={handelValue2}
+                  value={cleanAnswerP1 ? "" : null}
+                />
+              </View>
+              <View>
+                <View style={{ margin: 5 }}>
+                  <Text style={{ marginHorizontal: 10 }}>Câu 3</Text>
+                </View>
+                <TextInput
+                  style={styles.inPutAnsew}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                  onChangeText={handelValue3}
+                  value={cleanAnswerP1 ? "" : null}
+                />
+              </View>
+              <View>
+                <View style={{ margin: 5 }}>
+                  <Text style={{ marginHorizontal: 10 }}>Câu 4</Text>
+                </View>
+                <TextInput
+                  style={styles.inPutAnsew}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                  onChangeText={handelValue4}
+                  value={cleanAnswerP1 ? "" : null}
+                />
+              </View>
+              <View>
+                <View style={{ margin: 5 }}>
+                  <Text style={{ marginHorizontal: 10 }}>Câu 5</Text>
+                </View>
+                <TextInput
+                  style={styles.inPutAnsew}
+                  underlineColorAndroid="transparent"
+                  autoCapitalize="none"
+                  onChangeText={handelValue5 }
+                  value={cleanAnswerP1 ? "" : null}
+                />
+              </View>
+              {/* //tạm thế  */}
+            </View>
+          </View>
+        </ScrollView>
+    </SafeAreaView>
+    );
+  }
+  
+export default Part1;
+>>>>>>> d8039d6 (11/12 commit)
 
 const styles = StyleSheet.create({
   img: {
@@ -321,3 +567,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+<<<<<<< HEAD
+=======
+
+>>>>>>> d8039d6 (11/12 commit)
