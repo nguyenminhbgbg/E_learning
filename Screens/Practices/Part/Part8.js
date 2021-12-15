@@ -1,6 +1,6 @@
-import React, { useState, useEffect} from 'react';
-import { Container, Card, CardItem,CheckBox} from 'native-base';
-import { ScrollView,FlatList,TextInput, View, Text, StyleSheet } from 'react-native';
+import React, { useRef, useEffect} from 'react';
+import { Container, Card } from 'native-base';
+import { ScrollView,FlatList,TextInput, View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import FitImage from "react-native-fit-image";
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,6 +16,18 @@ const Part8 = ({ route, navigation }) =>{
   const [value3, setValue3] = React.useState("");
   const [value4, setValue4] = React.useState("");
   const [value5, setValue5] = React.useState("");
+  const txtVa1Ref = useRef();
+  const txtVa2Ref = useRef();
+  const txtVa3Ref = useRef();
+  const txtVa4Ref = useRef();
+  const txtVa5Ref = useRef();
+  const [answerAll, setAnswerAll] = React.useState({
+    val1: [],
+    val2: [],
+    val3: [],
+    val4: [],
+    val5: [],
+  });
 
   useEffect(() => {
     if(cleanAnswerP8 == true){
@@ -45,6 +57,27 @@ const Part8 = ({ route, navigation }) =>{
     }
   }, [part8, value1, value2, value3, value4, value5]);
 
+  useEffect(() => {
+    var x = [];
+    var li = part8.questions.forEach((ques) => {
+      x.push(ques.id);
+    });
+    function Key(arr, b) {
+      var bx = b.filter(function (an) {
+        return an.cauhoi_id == arr;
+      });
+      return bx;
+    }
+    setAnswerAll({
+      ...answerAll,
+      val1: Key(x[0], part8.answers),
+      val2: Key(x[1], part8.answers),
+      val3: Key(x[2], part8.answers),
+      val4: Key(x[3], part8.answers),
+      val5: Key(x[4], part8.answers),
+  });
+  console.log(answerAll.val1)
+  }, [part8]);
   const checkAnswers = () => {
     var result = 0;
 
@@ -76,92 +109,187 @@ const Part8 = ({ route, navigation }) =>{
     SavePointP8(result);
   };
 
-  const {part8 , cleanAnswerP8 } = useSelector(state => state.mainReducer);
+  const {part8 , cleanAnswerP8, checkAnswer } = useSelector(state => state.mainReducer);
 
+  const renderItem = ({ item, index }) => {
+      return (
+        <View>
+          <Text style={styles.textQestion}>
+            {item.noidung_dapan}
+          </Text>
+      </View>
+      )
+  }
   return (
     <Container>
         <ScrollView>
-          <Card>
-          <FitImage
-            indicator={false} // disable loading indicator
-            indicatorColor="white" // react native colors or color codes like #919191
-            indicatorSize="integer" // (small | large) or integer
-            style={styles.fitImage}
-            source={{
-              uri:`https://nikaws.cf/${
-                part8.listPartDocumentArray[0].url
-              }`
-          }}/>
-          </Card>
-          <View style={{ flex: 1, alignItems: "center", marginBottom: 18 }}>
-          <Text style={{ fontSize: 20, color: "blue" }}>Điền đáp án:</Text>
-          <View
-            style={{
-              flexDirection: "column",
-            }}
-          >
-            <View style={{ flexDirection: "row", marginBottom: 5 }}>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 51</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.inner}>
+            <Card>
+              <FitImage
+                indicator={false} // disable loading indicator
+                indicatorColor="white" // react native colors or color codes like #919191
+                style={styles.fitImage}
+                source={{
+                  uri:`https://nikaws.cf/${
+                    part8.listPartDocumentArray[0].url
+                  }`
+              }}/>
+            </Card>
+            <View style={{ flex: 1, alignItems: "center", marginBottom: 18 }}>
+              <Text style={{ fontSize: 20, color: "blue" }}>Điền đáp án:</Text>
+              <View
+                style={{
+                  flexDirection: "column",
+                }}
+                >
+                <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 51</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue1}
+                    value={cleanAnswerP8 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa2Ref.current.focus()}
+                    ref={txtVa1Ref}
+                  />
+                </View>
+                <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 52</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue2}
+                    value={cleanAnswerP8 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa3Ref.current.focus()}
+                    ref={txtVa2Ref}
+                  />
+                </View>
+                <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 53</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue3}
+                    value={cleanAnswerP8 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa4Ref.current.focus()}
+                    ref={txtVa3Ref}
+                  />
+                </View>
+                <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 54</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue4}
+                    value={cleanAnswerP8 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa5Ref.current.focus()}
+                    ref={txtVa4Ref}
+                  />
+                </View>
+                <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 55</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue5}
+                    value={cleanAnswerP8 ? "" : null}
+                    returnKeyType="go"
+                    ref={txtVa5Ref}
+                  />
+                </View>
               </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={handelValue1}
-                value={cleanAnswerP8 ? "" : null}
-              />
             </View>
-            <View style={{ flexDirection: "row", marginBottom: 5 }}>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 52</Text>
+            {checkAnswer ? (
+            <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <Text style={{ fontSize: 20, color: "blue" , marginVertical: 5}}>Đáp án</Text>
               </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={handelValue2}
-                value={cleanAnswerP8 ? "" : null}
-              />
+              <View style={{ flexDirection: "column", marginLeft: '8%'}}>
+                  <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                    <View style={{ margin: 5 }}>
+                      <Text style={{ marginHorizontal: 10 }}>Câu 51</Text>
+                    </View>
+                    <FlatList
+                      data={answerAll.val1}
+                      renderItem={renderItem}
+                      keyExtractor={item => `${item.id}`}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    />
+                  </View>
+                  <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                    <View style={{ margin: 5 }}>
+                      <Text style={{ marginHorizontal: 10 }}>Câu 52</Text>
+                    </View>
+                    <FlatList
+                      data={answerAll.val2}
+                      renderItem={renderItem}
+                      keyExtractor={item => `${item.id}`}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    />
+                  </View>
+                  <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                    <View style={{ margin: 5 }}>
+                      <Text style={{ marginHorizontal: 10 }}>Câu 53</Text>
+                    </View>
+                    <FlatList
+                      data={answerAll.val3}
+                      renderItem={renderItem}
+                      keyExtractor={item => `${item.id}`}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    />
+                  </View>
+                  <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                    <View style={{ margin: 5 }}>
+                      <Text style={{ marginHorizontal: 10 }}>Câu 54</Text>
+                    </View>
+                    <FlatList
+                      data={answerAll.val4}
+                      renderItem={renderItem}
+                      keyExtractor={item => `${item.id}`}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    />
+                  </View>
+                  <View style={{ flexDirection: "row", marginBottom: 5 }}>
+                    <View style={{ margin: 5 }}>
+                      <Text style={{ marginHorizontal: 10 }}>Câu 55</Text>
+                    </View>
+                    <FlatList
+                      data={answerAll.val5}
+                      renderItem={renderItem}
+                      keyExtractor={item => `${item.id}`}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                    />
+                  </View>
+                </View>
             </View>
-            <View style={{ flexDirection: "row", marginBottom: 5 }}>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 53</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={handelValue3}
-                value={cleanAnswerP8 ? "" : null}
-              />
-            </View>
-            <View style={{ flexDirection: "row", marginBottom: 5 }}>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 54</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={handelValue4}
-                value={cleanAnswerP8 ? "" : null}
-              />
-            </View>
-            <View style={{ flexDirection: "row", marginBottom: 5 }}>
-              <View style={{ margin: 5 }}>
-                <Text style={{ marginHorizontal: 10 }}>Câu 55</Text>
-              </View>
-              <TextInput
-                style={styles.inPutAnsew}
-                underlineColorAndroid="transparent"
-                autoCapitalize="none"
-                onChangeText={handelValue5}
-                value={cleanAnswerP8 ? "" : null}
-              />
-            </View>
+            ) : null }
           </View>
-        </View>
+        </TouchableWithoutFeedback>
         </ScrollView>
     </Container>
   );
@@ -172,6 +300,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  inner: {
+    flex: 1,
+    justifyContent: "space-around"
   },
   checkboxContainer: {
     flexDirection: "row",

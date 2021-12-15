@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-import { LUYEN_DE, LESSON_URL,LESSON_DETAIL_URL, LOGIN_URL, REGISTER_URL } from '../config';
+import { LUYEN_DE, ALL_DE_THI, LESSON_URL,LESSON_DETAIL_URL, LOGIN_URL, REGISTER_URL } from '../config';
 
 // Define action types
 export const GET_ALL_PARTS = 'GET_ALL_PARTS';
 export const GET_ALL_LESSON = 'GET_ALL_LESSON';
+// danh sach de thi
+export const GET_LIST_ALL_DE_THI = 'GET_LIST_ALL_DE_THI';
 export const GET_LESSON_DETAIL = 'GET_LESSON_DETAIL';
 
 // Luyen de 
@@ -50,6 +52,10 @@ export const CHANGE_CLEAN_P10 = 'CHANGE_CLEAN_P10';
 export const CHANGE_CLEAN_P11 = 'CHANGE_CLEAN_P11';
 export const CHANGE_CLEAN_P12 = 'CHANGE_CLEAN_P12';
 export const CHANGE_CLEAN_P13 = 'CHANGE_CLEAN_P13';
+
+// xem dap an
+export const SEE_ALL_ANSWER = 'SEE_ALL_ANSWER';
+
 
 export const loginAction = (email, pass) => {
   try {
@@ -167,7 +173,6 @@ export const getLessonDetail = lessonId => {
   }
 };
 
-
 export const getAllDeThi = idDeThi => {
   try {
     return async dispatch => {
@@ -180,6 +185,26 @@ export const getAllDeThi = idDeThi => {
         });
       } else {
         console.log('Unable to fetch data from the API CHAPTER URL!');
+      }
+    };
+  } catch (error) {
+    // Add custom logic to handle errors
+    console.log(error);
+  }
+};
+
+export const getListAllDeThi = () => {
+  try {
+    return async dispatch => {
+      const response = await axios.get(`${ALL_DE_THI}`);
+      // console.log('DATA ========>', response.data);
+      if (response.data) {
+        dispatch({
+          type: GET_LIST_ALL_DE_THI,
+          payload: response.data
+        });
+      } else {
+        console.log('Unable to fetch data from the API getListAllDeThi!');
       }
     };
   } catch (error) {
@@ -361,5 +386,11 @@ export const changeCleanP12 = () => dispatch => {
 export const changeCleanP13 = () => dispatch => {
   dispatch({
     type: CHANGE_CLEAN_P13,
+  });
+};
+
+export const seeAllAnswer = () => dispatch => {
+  dispatch({
+    type: SEE_ALL_ANSWER,
   });
 };

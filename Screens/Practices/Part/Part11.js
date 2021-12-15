@@ -1,21 +1,38 @@
 import React, { useState, useEffect} from 'react';
 import { Container, Card, CardItem,CheckBox} from 'native-base';
-import { ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import FitImage from "react-native-fit-image";
-
+import { useAudioHelper } from '../../../helpers/audio-helper';
+import Slider from '@react-native-community/slider';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { savePointP11 , changeCleanP11 } from '../../../redux/actions';
 
 const Part11 = ({ route, navigation }) =>{
-
+  const player = useAudioHelper({
+    listSounds: [{
+      type: 'network',
+      path: `https://nikaws.cf/datafordb/iKbvUgcz6D2OkiEIhoMroRUCR6uZZKeoTzK4vUTO.mp3`,
+      name: "P9",
+    }],
+    timeRate: 15,
+    isLogStatus: true,
+  });
   const dispatch = useDispatch();
   const SavePointP11 = (point) => dispatch(savePointP11(point));
   const ChangeCleanP11 = () => dispatch(changeCleanP11());
+  const [clean, setClean] = useState(null);
   useEffect(() => {
-    if(cleanAnswerP11 == true){
+    setClean(cleanAnswerP11);
+    if(clean == true){
       ChangeCleanP11();
+      setQes1One(false) , setQes1Two(false), setQes1Three(false);
+      setQes2One(false) , setQes2Two(false), setQes2Three(false);
+      setQes3One(false) , setQes3Two(false), setQes3Three(false);
+      setQes4One(false) , setQes4Two(false), setQes4Three(false);
+      setQes5One(false) , setQes5Two(false), setQes5Three(false);
     }
-  }, [cleanAnswerP11]);
+  });
 
   const [qes1One, setQes1One] = useState(false);
   const [qes1Two, setQes1Two] = useState(false);
@@ -164,7 +181,7 @@ const Part11 = ({ route, navigation }) =>{
     SavePointP11(points);
     
   };
-  const {part11 , cleanAnswerP11 } = useSelector(state => state.mainReducer);
+  const {part11 , cleanAnswerP11, checkAnswer } = useSelector(state => state.mainReducer);
 
   return (
     <Container>
@@ -173,7 +190,6 @@ const Part11 = ({ route, navigation }) =>{
           <FitImage
             indicator={false} // disable loading indicator
             indicatorColor="white" // react native colors or color codes like #919191
-            indicatorSize="integer" // (small | large) or integer
             style={styles.fitImage}
             source={{
               uri:`https://nikaws.cf/${
@@ -181,11 +197,52 @@ const Part11 = ({ route, navigation }) =>{
               }`
           }}/>
           </Card>
-          
+          <View style={styles.container}>
+              <View style={styles.progressBar}>
+                  {
+                    player.status === 'play' ?
+                        <TouchableOpacity
+                            onPress={player.pause}
+                            style={{marginHorizontal:20}}
+                        >
+                            <FontAwesomeIcon
+                                name='pause'
+                                color='white'
+                                size={25}
+                            />
+                        </TouchableOpacity> :
+                        <TouchableOpacity
+                            onPress={player.play}
+                            style={{marginHorizontal:20}}
+                        >
+                            <FontAwesomeIcon
+                                name='play'
+                                color='white'
+                                size={25}
+                            />
+                        </TouchableOpacity>
+                  }
+                  <Text style={styles.progressBarText}>{player.currentTimeString}</Text>
+                  <Slider
+                      style={{width: '50%', height: 40}}
+                      minimumValue={0}
+                      maximumValue={player.duration}
+                      value={player.currentTime}
+                      minimumTrackTintColor="#FFFFFF"
+                      maximumTrackTintColor="gray"
+                      thumbTintColor='#FFFFFF'
+                      onTouchStart={player.pause}
+                      onTouchEnd={player.play}
+                      disabled={true}
+                      // onSlidingComplete={(seconds) => player.seekToTime(seconds)}
+                  />
+                  <Text style={styles.progressBarText}>{player.durationString}</Text>
+              </View>
+          </View>
           {/* câu 1 */}
           <Card>
             <CardItem header>
-              <Text style={{fontSize:18}}>11. {part11.questions[0].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>11. {part11.questions[0].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -193,7 +250,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes1OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part11.answers[0].noidung_dapan}</Text>
+                {(part11.answers[0].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part11.answers[0].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part11.answers[0].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -201,7 +260,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes1TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part11.answers[1].noidung_dapan}</Text>
+                {(part11.answers[1].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part11.answers[1].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part11.answers[1].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -209,13 +270,14 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes1ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part11.answers[2].noidung_dapan}</Text>
+                {(part11.answers[2].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part11.answers[2].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part11.answers[2].noidung_dapan}</Text> }
               </CardItem>
               
           {/* Câu 2 */}
-          
             <CardItem header>
-              <Text style={{fontSize:18}}>12. {part11.questions[1].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>12. {part11.questions[1].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -223,7 +285,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes2OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part11.answers[3].noidung_dapan}</Text>
+                {(part11.answers[3].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part11.answers[3].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part11.answers[3].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -231,7 +295,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes2TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part11.answers[4].noidung_dapan}</Text>
+                {(part11.answers[4].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part11.answers[4].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part11.answers[4].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -239,13 +305,14 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes2ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part11.answers[5].noidung_dapan}</Text>
+                {(part11.answers[5].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part11.answers[5].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part11.answers[5].noidung_dapan}</Text> }
               </CardItem>
           
           {/* Câu 3 */}
-          
             <CardItem header>
-              <Text style={{fontSize:18}}>13. {part11.questions[2].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>13. {part11.questions[2].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -253,7 +320,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes3OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part11.answers[6].noidung_dapan}</Text>
+                {(part11.answers[6].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part11.answers[6].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part11.answers[6].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -261,7 +330,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes3TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part11.answers[7].noidung_dapan}</Text>
+                {(part11.answers[7].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part11.answers[7].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part11.answers[7].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -269,13 +340,14 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes3ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part11.answers[8].noidung_dapan}</Text>
+                {(part11.answers[8].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part11.answers[8].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part11.answers[8].noidung_dapan}</Text> }
               </CardItem>
         
           {/* Câu 4 */}
-          
             <CardItem header>
-              <Text style={{fontSize:18}}>14. {part11.questions[3].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>14. {part11.questions[3].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -283,7 +355,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes4OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part11.answers[9].noidung_dapan}</Text>
+                {(part11.answers[9].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part11.answers[9].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part11.answers[9].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -291,7 +365,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes4TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part11.answers[10].noidung_dapan}</Text>
+                {(part11.answers[10].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part11.answers[10].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part11.answers[10].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -299,13 +375,14 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes4ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part11.answers[11].noidung_dapan}</Text>
+                {(part11.answers[11].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part11.answers[11].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part11.answers[11].noidung_dapan}</Text> }
               </CardItem>
           
           {/* Câu 5 */}
-          
             <CardItem header>
-              <Text style={{fontSize:18}}>15. {part11.questions[4].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>15. {part11.questions[4].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -313,7 +390,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes5OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part11.answers[12].noidung_dapan}</Text>
+                {(part11.answers[12].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part11.answers[12].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part11.answers[12].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -321,7 +400,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes5TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part11.answers[13].noidung_dapan}</Text>
+                {(part11.answers[13].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part11.answers[13].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part11.answers[13].noidung_dapan}</Text> }
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -329,7 +410,9 @@ const Part11 = ({ route, navigation }) =>{
                   onPress= {() => qes5ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part11.answers[14].noidung_dapan}</Text>
+                {(part11.answers[14].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part11.answers[14].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part11.answers[14].noidung_dapan}</Text> }
               </CardItem>
           </Card>
           
@@ -339,10 +422,21 @@ const Part11 = ({ route, navigation }) =>{
 }
 
 const styles = StyleSheet.create({
+  progressBar: {
+    flexDirection: 'row',
+    marginVertical:15,
+    marginHorizontal:15,
+    alignItems: 'center'
+  },
+  progressBarText: {
+      color: 'white',
+      alignSelf: 'center',
+  },
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    flex:1,
+    justifyContent:'center',
+    backgroundColor:'#3c444c',
+    borderRadius:50
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -354,6 +448,14 @@ const styles = StyleSheet.create({
   label: {
     margin: 8,
   },
+  textAnswers: {
+    color:'#000',
+    fontSize: 16
+  },
+   textQues: {
+    color:'#000',
+    fontSize: 18
+   }
 });
 
 export default Part11;

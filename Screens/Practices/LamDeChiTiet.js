@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, View, Alert } from "react-native";
 import { Container, Header,Subtitle, Tab, Tabs, ScrollableTab, Left, Right, Icon, Button, Body ,Title } from 'native-base';
 import CountDown from 'react-native-countdown-component';
 
@@ -23,23 +23,50 @@ import Part12 from "./Part/Part12";
 import Part13 from "./Part/Part13";
 
 const LamDeChiTiet = ({ route, navigation }) => {
-  
-  const { timeLoad } = useSelector(state => state.mainReducer);
+  const { loadTime } = route.params;
+  const { checkAnswer } = useSelector(state => state.mainReducer);
   const dispatch = useDispatch();
   const fetchAllParts = (idDeThi) => dispatch(getAllDeThi(idDeThi));
-
   const [isLoading, SetIsLoading] = React.useState(false);
+
+  useEffect(() => {
+    console.log('check data: ' + checkAnswer)
+  }, [checkAnswer]);
+
   const [idDe, SetIdDe] = React.useState(null);
+  // const [loadTime , setLoadTime ] = React.useState();
 
   const OnCheckAnswer = () => {
     SetIsLoading(false);
-    navigation.navigate("NopBaiTinhDiem");
+    Alert.alert(
+      "Thông báo",
+      'Bạn có chắc chắn muốn nộp bài thi?',
+      [
+          {
+          text: 'Xác nhận',
+          onPress: () =>
+            navigation.navigate("NopBaiTinhDiem"),
+          },
+
+          {
+          text: 'Hủy',
+          onPress: () => console.log('Hủy nộp bài'),
+          },
+      ],
+      { cancelable: false,
+        onDismiss: () =>
+        Alert.alert(
+          "This alert was dismissed by tapping outside of the alert dialog."
+        ), }
+      );
+    
   };
   useEffect(() => {
     let { idDe } = route.params;
-      SetIdDe(idDe)
-    fetchAllParts(idDe);
-    
+      SetIdDe(idDe);
+      if(idDe){
+        fetchAllParts(idDe);
+      }
   }, [route.params]);
 
     return (
@@ -57,12 +84,13 @@ const LamDeChiTiet = ({ route, navigation }) => {
             <Title>LÀM ĐỀ</Title>
             <Subtitle>Mã đề: {idDe}</Subtitle>
           </Body>
-
+          
           <Right>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <CountDown
+              { !checkAnswer ? (
+                <CountDown
                 size={13}
-                until={timeLoad}
+                until={ loadTime }
                 onFinish={() => {
                   alert("Finished") ,
                   navigation.navigate("NopBaiTinhDiem")
@@ -80,11 +108,17 @@ const LamDeChiTiet = ({ route, navigation }) => {
                 timeLabels={{ m: null, s: null }}
                 showSeparator
               />
+              ) : null}
+              
               <Button
                 primary
                 onPress={() => OnCheckAnswer() }
               >
-                <Text style={{ fontSize: 16, color: "#fff" }}>NỘP BÀI</Text>
+                {
+                  checkAnswer ? (
+                    <Text style={{ fontSize: 16, color: "#fff" }}>KẾT THÚC</Text>
+                  ) : <Text style={{ fontSize: 16, color: "#fff" }}>NỘP BÀI</Text>
+                }
               </Button>
             </View>
           </Right>
@@ -98,7 +132,7 @@ const LamDeChiTiet = ({ route, navigation }) => {
           </View>
         ) : (
           <Tabs renderTabBar={() => <ScrollableTab />}>
-            <Tab heading="Part 1">
+            <Tab page heading="Part 1">
               <Part1 />
             </Tab>
 
@@ -146,11 +180,11 @@ const LamDeChiTiet = ({ route, navigation }) => {
             </Tab>
 
             <Tab heading="Part 4 - Listen">
-              <Part12 maDe={idDe} />
+              <Part12 />
             </Tab>
 
             <Tab heading="Part 5 - Listen">
-              <Part13 maDe={idDe} />
+              <Part13 />
             </Tab>
           </Tabs>
         )}

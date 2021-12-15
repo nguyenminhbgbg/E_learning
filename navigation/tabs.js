@@ -20,7 +20,7 @@ const Tabs =() => {
          drawerContent={(props) => <DrawerContent {...props} />}
        >
          <Drawer.Screen name="HomeScreen" component={MainTabScreen} />
-         <Drawer.Screen name="SupportScreen" component={SupportScreen} />
+         <Drawer.Screen name="SupportScreen" component={SupportScreen}/>
          <Drawer.Screen name="LearningList" component={LearningList} />
          <Drawer.Screen name="LearningDetail" component={LearningDetail} />
          <Drawer.Screen name="PracticeTopics" component={PracticeTopics} />

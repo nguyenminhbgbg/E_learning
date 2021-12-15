@@ -1,4 +1,4 @@
-import React,{ useEffect } from "react";
+import React,{ useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,9 @@ import {
   Image,
   StatusBar,
   StyleSheet,
+  TouchableWithoutFeedback,
+  Alert,
+  Keyboard
 } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -28,6 +31,8 @@ const SignInScreen = ({ navigation }) => {
 
   const LoginAction = (email, pass) => dispatch(loginAction(email, pass));
 
+  const txtPassWordRef = useRef();
+
   const [data, setData] = React.useState({
     email: "",
     password: "",
@@ -45,10 +50,12 @@ const SignInScreen = ({ navigation }) => {
   }, [userToken,data.email, data.password]);
 
   function LoginActionDone() {
+    if(data.email && data.password){
       LoginAction(data.email, data.password)
       setTimeout( async () => {
         signIn()
-    }, 1000);
+      }, 1000);
+    }
   }
 
   const UserToken = async () =>{
@@ -108,135 +115,161 @@ const SignInScreen = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.text_header}>Welcome!</Text>
       </View>
-      <Animatable.View 
-        animation="fadeInUpBig"
-        style={[styles.footer, {
+      <TouchableWithoutFeedback style={[styles.footer, {
             backgroundColor: colors.background
-        }]}
-      >
-        <Text style={styles.text_footer}>Email</Text>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Your Email"
-            onChangeText={(val) => textInputChange(val)}
-            style={styles.textInput}
-            autoCapitalize="none"
-          />
-          {data.check_textInputChange ?
-            <Animatable.View
-                animation="bounceIn"
-            >
-                <Feather 
-                    name="check-circle"
-                    color="green"
-                    size={20}
-                />
-            </Animatable.View>
-            : null}
-        </View>
-        { data.isValidUser ? null : 
-            <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Tài khoản có độ dài tối thiểu 6 kí tự và dạng email.</Text>
-            </Animatable.View>
-            }
-        <Text style={[styles.text_footer, {
-          marginTop: 30
-        }]}>Password</Text>
-        <View style={styles.action}>
-          <FontAwesome name="lock" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Your Password"
-            onChangeText={(val) => handlerPasswordChange(val)}
-            secureTextEntry={data.secureTextEntry ? true : false}
-            style={styles.textInput}
-            autoCapitalize="none"
-          />
-          <TouchableOpacity
-            onPress={updateSecureTextEntry}
-          >
-            {data.secureTextEntry ?
-              <Feather name="eye-off" color="gray" size={20} />
-              :
-              <Feather name="eye" color="gray" size={20} />}
-          </TouchableOpacity>
-        </View>
-        { data.isValidPassword ? null : 
-            <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Mật khẩu tối thiểu 6 kí tự.</Text>
-            </Animatable.View>
-            }
-        { data.mesLogin ? null : 
-            <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>{mesLogin}</Text>
-            </Animatable.View>
-            }
-
-        <View style={styles.button}>
-          <TouchableOpacity
-            style={styles.signIn}
-            onPress={() => { LoginActionDone() }}
-          >
-            <LinearGradient
-              colors={["#08d4c4", "#01ab9d"]}
-              style={styles.signIn}
-            >
-              <Text style={styles.textSign} >Login</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-              onPress={() => navigation.navigate('SignUpScreen')}
-              style={[styles.signIn, {
-                  borderColor: '#009387',
-                  borderWidth: 1,
-                  marginTop: 15
+        }]} onPress={Keyboard.dismiss}>
+          <Animatable.View 
+              animation="fadeInUpBig"
+              style={[styles.footer, {
+                  backgroundColor: colors.background
               }]}
-          >
-              <Text style={[styles.textSign, {
-                  color: '#009387'
-              }]}>Đăng kí tài khoản</Text>
-          </TouchableOpacity>
-        </View>
-        <Animatable.View style={styles.signInW}>
+            >
+              <Text style={styles.text_footer}>Email</Text>
+              <View style={styles.action}>
+                <FontAwesome name="user-o" color="#05375a" size={20} />
+                <TextInput
+                  placeholder="Your Email"
+                  onChangeText={(val) => textInputChange(val)}
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  returnKeyType="next"
+                  autoCorrect={false}
+                  onSubmitEditing={() => txtPassWordRef.current.focus()}
+                />
+                {data.check_textInputChange ?
+                  <Animatable.View
+                      animation="bounceIn"
+                  >
+                      <Feather 
+                          name="check-circle"
+                          color="green"
+                          size={20}
+                      />
+                  </Animatable.View>
+                  : null}
+              </View>
+              { data.isValidUser ? null : 
+                  <Animatable.View animation="fadeInLeft" duration={500}>
+                  <Text style={styles.errorMsg}>Tài khoản có độ dài tối thiểu 6 kí tự và dạng email.</Text>
+                  </Animatable.View>
+                  }
+              <Text style={[styles.text_footer, {
+                marginTop: 30
+              }]}>Password</Text>
+              <View style={styles.action}>
+                <FontAwesome name="lock" color="#05375a" size={20} />
+                <TextInput
+                  placeholder="Your Password"
+                  onChangeText={(val) => handlerPasswordChange(val)}
+                  secureTextEntry={data.secureTextEntry ? true : false}
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  ref={txtPassWordRef}
+                />
+                <TouchableOpacity
+                  onPress={updateSecureTextEntry}
+                >
+                  {data.secureTextEntry ?
+                    <Feather name="eye-off" color="gray" size={20} />
+                    :
+                    <Feather name="eye" color="gray" size={20} />}
+                </TouchableOpacity>
+              </View>
+              { data.isValidPassword ? null : 
+                  <Animatable.View animation="fadeInLeft" duration={500}>
+                  <Text style={styles.errorMsg}>Mật khẩu tối thiểu 6 kí tự.</Text>
+                  </Animatable.View>
+                  }
+              { mesLogin ? <Animatable.View animation="fadeInLeft" duration={500}>
+                  <Text style={styles.errorMsg}>{mesLogin}</Text>
+                  </Animatable.View> : null
+                  }
 
-          <TouchableOpacity
-            style={[styles.signInWith, {
-              borderColor: '#009387',
-              borderWidth: 1,
-              marginTop: 15,
-              flexDirection: 'row',
-              flex: 1,
-              marginLeft: 5,
-              marginRight: 5
-            }]}
-          >
-            <FontAwesome name="facebook-square" color="#385592" size={28} style={{ marginRight: 5, marginLeft: 5 }} />
-            <Text style={[styles.textSign, {
-              color: '#385592'
-            }]}>FACEBOOK</Text>
-          </TouchableOpacity>
+              <View style={styles.button}>
+                <TouchableOpacity
+                  style={styles.signIn}
+                  onPress={() => { LoginActionDone() }}
+                >
+                  <LinearGradient
+                    colors={["#08d4c4", "#01ab9d"]}
+                    style={styles.signIn}
+                  >
+                    <Text style={styles.textSign} >Login</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.signInWith, {
-              borderColor: '#009387',
-              borderWidth: 1,
-              marginTop: 15,
-              flex: 1,
-              flexDirection: 'row',
-              marginLeft: 5,
-              marginRight: 5
-            }]}
-          >
-            <Image source={require('./google.png')}
-                style={{width:28,height:24 , marginRight:5, marginLeft: 5}}            
-            />
-            <Text style={[styles.textSign, {
-              color: '#666664'
-            }]}>GOOGLE</Text>
-          </TouchableOpacity>
-        </Animatable.View>
-      </Animatable.View>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('SignUpScreen')}
+                    style={[styles.signIn, {
+                        borderColor: '#009387',
+                        borderWidth: 1,
+                        marginTop: 15
+                    }]}
+                >
+                    <Text style={[styles.textSign, {
+                        color: '#009387'
+                    }]}>Đăng kí tài khoản</Text>
+                </TouchableOpacity>
+              </View>
+              <Animatable.View style={styles.signInW}>
+
+                <TouchableOpacity
+                onPress={() => Alert.alert(
+                  "Thông báo",
+                  'Tính năng đang được phát triển thêm',
+                  [
+                      {
+                      text: 'Xác nhận',
+                      }
+                  ],
+                )}
+                  style={[styles.signInWith, {
+                    borderColor: '#009387',
+                    borderWidth: 1,
+                    marginTop: 15,
+                    flexDirection: 'row',
+                    flex: 1,
+                    marginLeft: 5,
+                    marginRight: 5
+                  }]}
+                >
+                  <FontAwesome name="facebook-square" color="#385592" size={28} style={{ marginRight: 5, marginLeft: 5 }} />
+                  <Text style={[styles.textSign, {
+                    color: '#385592'
+                  }]}>FACEBOOK</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                onPress={() => Alert.alert(
+                  "Thông báo",
+                  'Tính năng đang được phát triển thêm',
+                  [
+                      {
+                      text: 'Xác nhận',
+                      }
+                  ],
+                )}
+                  style={[styles.signInWith, {
+                    borderColor: '#009387',
+                    borderWidth: 1,
+                    marginTop: 15,
+                    flex: 1,
+                    flexDirection: 'row',
+                    marginLeft: 5,
+                    marginRight: 5
+                  }]}
+                >
+                  <Image source={require('./google.png')}
+                      style={{width:28,height:24 , marginRight:5, marginLeft: 5}}            
+                  />
+                  <Text style={[styles.textSign, {
+                    color: '#666664'
+                  }]}>GOOGLE</Text>
+                </TouchableOpacity>
+              </Animatable.View>
+            </Animatable.View>
+        </TouchableWithoutFeedback>
+      
 
 
     </View>

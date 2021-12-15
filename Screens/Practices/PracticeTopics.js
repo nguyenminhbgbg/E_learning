@@ -1,63 +1,54 @@
-import React, { Component } from 'react';
-import {StatusBar, View,StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, {useEffect} from "react";
+import { View,StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Container, Header, Left, Body,Content, Right, Button, Icon, Title } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
 
-export default class PracticeTopics extends Component {
-    
-    state = {  }
-    render() {
-      const {itemId,data} = this.props.route.params
-      const idDe = itemId
-        return (
-          <Container>
+function PracticeTopics({ route, navigation }) {
+
+    const [exam, setExam] = React.useState(null);  
+    React.useEffect(() => {
+      let { exam } = route.params;
+      setExam(exam)
+      console.log(exam)
+    }, [route.params])
+
+    if (exam) {
+      return (
+        <Container>
+          <View>
             <Header style={{ backgroundColor: "#d1a0a7" }}>
               <Left></Left>
               <Body>
-                <Title style={{ fontSize: 23, marginLeft: 20 }}>LÀM ĐỀ</Title>
+                <Title style={{ fontSize: 23, alignItems:'center'}}>LÀM ĐỀ</Title>
               </Body>
             </Header>
-            <Content style={{ marginTop: 5 }}>
-              <View style={styles.container1}>
-                <Text style={styles.text}>Bắt đầu làm đề</Text>
-              </View>
-              <View
-                style={{ marginLeft: 10, margin: 5, alignContent: "center" }}
-              >
-                <Text style={styles.text}>Mã đề: {itemId}</Text>
-                <Text style={styles.text}>{data}</Text>
-                <Text style={styles.text}>Tổng Số câu: 55</Text>
-              </View>
-              <View style={styles.container1}>
-                <Button
-                  rounded
-                  light
-                  style={{ width: "40%", alignItems: "center" }}
-                  onPress={() =>
-                    this.props.navigation.navigate(
-                      "LamDeChiTiet",
-                      { idDe: idDe },
-                      { loading: true }
-                    )
-                  }
-                >
-                  <Text
-                    style={{
-                      color: "#efefef",
-                      margin: 5,
-                      marginLeft: "15%",
-                      marginRight: "15%",
-                    }}
-                  >
-                    Bắt đầu làm đề
-                  </Text>
-                </Button>
-              </View>
-            </Content>
-          </Container>
-        );
-    }
+            <View style={{}}>
+              <Text style={styles.text}>CHI TIẾT ĐỀ THI</Text>
+              <Text style={styles.text}>Mã đề: {exam.id}</Text>
+              <Text style={styles.text}>Tên Đề: {exam.name}</Text>
+              <Text style={styles.text}>Gồm: 9 Part Reading, 5 Part Listening</Text>
+              <Text style={styles.text}>9 Part Reading: 55</Text>
+              <Text style={styles.text}>5 Part Listening: 25</Text>
+            </View>
+            <View >
+              <TouchableOpacity 
+                onPress={() => navigation.navigate("LamDeChiTiet", {
+                  idDe: exam.id,
+                  loadTime: 5400, 
+              })}
+                style={styles.appButtonContainer}>
+                <Text style={styles.appButtonText}>Bắt đầu</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Container>
+      );
+  } else {
+      return (<></>)
+  }
+
+    
 }
+export default PracticeTopics;
 
 const styles = StyleSheet.create({
   container1: {
@@ -79,9 +70,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fefefe'
   },
   text: {
-    marginLeft:5,
-    flex:1,
+    marginLeft:'3%',
     fontSize: 20,
     color: '#000'
+  },
+  appButtonContainer: {
+    elevation: 8,
+    backgroundColor: "#009688",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignContent:'center',
+    alignItems:'center',
+    marginHorizontal:'10%'
+  },
+  appButtonText: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "bold",
+    alignSelf: "center",
+    textTransform: "uppercase"
   }
+
 });

@@ -10,12 +10,22 @@ const Part4 = ({ route, navigation }) =>{
 
   const dispatch = useDispatch();
   const SavePointP4 = (point) => dispatch(savePointP4(point));
-  const ChangeCleanP4 = () => dispatch(changeCleanP4());
+  const ChangeCleanP4 = () => dispatch(changeCleanP4()); 
+  const [clean, setClean] = useState(null);
+
   useEffect(() => {
-    if(cleanAnswerP4 == true){
+    setClean(cleanAnswerP4);
+    if(clean == true){
       ChangeCleanP4();
+      setQes1One(false) , setQes1Two(false), setQes1Three(false);
+      setQes2One(false) , setQes2Two(false), setQes2Three(false);
+      setQes3One(false) , setQes3Two(false), setQes3Three(false);
+      setQes4One(false) , setQes4Two(false), setQes4Three(false);
+      setQes5One(false) , setQes5Two(false), setQes5Three(false);
+      setQes6One(false) , setQes6Two(false), setQes6Three(false);
+      setQes7One(false) , setQes7Two(false), setQes7Three(false);
     }
-  }, [cleanAnswerP4]);
+  });
 
   const [qes1One, setQes1One] = useState(false);
   const [qes1Two, setQes1Two] = useState(false);
@@ -210,7 +220,7 @@ const Part4 = ({ route, navigation }) =>{
     SavePointP4(points);
     
   };
-  const {part4 ,cleanAnswerP4 } = useSelector(state => state.mainReducer);
+  const {part4 ,cleanAnswerP4, checkAnswer } = useSelector(state => state.mainReducer);
 
   return (
     <Container>
@@ -219,7 +229,6 @@ const Part4 = ({ route, navigation }) =>{
           <FitImage
             indicator={false} // disable loading indicator
             indicatorColor="white" // react native colors or color codes like #919191
-            indicatorSize="integer" // (small | large) or integer
             style={styles.fitImage}
             source={{
               uri:`https://nikaws.cf/${
@@ -231,7 +240,7 @@ const Part4 = ({ route, navigation }) =>{
           {/* câu 1 */}
           <Card>
             <CardItem header>
-              <Text style={{fontSize:18}}>21. {part4.questions[0].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>21. {part4.questions[0].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -239,7 +248,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes1OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part4.answers[0].noidung_dapan}</Text>
+                {(part4.answers[0].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part4.answers[0].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part4.answers[0].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -247,7 +259,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes1TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part4.answers[1].noidung_dapan}</Text>
+                {(part4.answers[1].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part4.answers[1].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part4.answers[1].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -255,13 +270,16 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes1ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part4.answers[2].noidung_dapan}</Text>
+                {(part4.answers[2].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part4.answers[2].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part4.answers[2].noidung_dapan}</Text> }
+              
               </CardItem>
               
           {/* Câu 2 */}
           
             <CardItem header>
-              <Text style={{fontSize:18}}>22. {part4.questions[1].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>22. {part4.questions[1].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -269,7 +287,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes2OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part4.answers[3].noidung_dapan}</Text>
+                {(part4.answers[3].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part4.answers[3].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part4.answers[3].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -277,7 +298,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes2TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part4.answers[4].noidung_dapan}</Text>
+                {(part4.answers[4].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part4.answers[4].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part4.answers[4].noidung_dapan}</Text> }
+               
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -285,13 +309,16 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes2ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part4.answers[5].noidung_dapan}</Text>
+                {(part4.answers[5].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part4.answers[5].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part4.answers[5].noidung_dapan}</Text> }
+              
               </CardItem>
           
           {/* Câu 3 */}
           
             <CardItem header>
-              <Text style={{fontSize:18}}>23. {part4.questions[2].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>23. {part4.questions[2].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -299,7 +326,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes3OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part4.answers[6].noidung_dapan}</Text>
+                {(part4.answers[6].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part4.answers[6].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part4.answers[6].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -307,7 +337,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes3TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part4.answers[7].noidung_dapan}</Text>
+                {(part4.answers[7].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part4.answers[7].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part4.answers[7].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -315,13 +348,16 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes3ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part4.answers[8].noidung_dapan}</Text>
+                {(part4.answers[8].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part4.answers[8].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part4.answers[8].noidung_dapan}</Text> }
+              
               </CardItem>
         
           {/* Câu 4 */}
           
             <CardItem header>
-              <Text style={{fontSize:18}}>24. {part4.questions[3].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>24. {part4.questions[3].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -329,7 +365,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes4OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part4.answers[9].noidung_dapan}</Text>
+                {(part4.answers[9].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part4.answers[9].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part4.answers[9].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -337,7 +376,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes4TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part4.answers[10].noidung_dapan}</Text>
+                {(part4.answers[10].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part4.answers[10].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part4.answers[10].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -345,13 +387,16 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes4ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part4.answers[11].noidung_dapan}</Text>
+                {(part4.answers[11].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part4.answers[11].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part4.answers[11].noidung_dapan}</Text> }
+              
               </CardItem>
           
           {/* Câu 5 */}
           
             <CardItem header>
-              <Text style={{fontSize:18}}>25. {part4.questions[4].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>25. {part4.questions[4].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -359,7 +404,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes5OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part4.answers[12].noidung_dapan}</Text>
+                {(part4.answers[12].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part4.answers[12].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part4.answers[12].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -367,7 +415,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes5TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part4.answers[13].noidung_dapan}</Text>
+                {(part4.answers[13].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part4.answers[13].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part4.answers[13].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -375,13 +426,16 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes5ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part4.answers[14].noidung_dapan}</Text>
+                {(part4.answers[14].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part4.answers[14].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part4.answers[14].noidung_dapan}</Text> }
+              
               </CardItem>
 
               {/* Câu 6 */}
           
             <CardItem header>
-              <Text style={{fontSize:18}}>26. {part4.questions[5].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>26. {part4.questions[5].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -389,7 +443,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes6OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part4.answers[15].noidung_dapan}</Text>
+                {(part4.answers[15].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part4.answers[15].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part4.answers[15].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -397,7 +454,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes6TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part4.answers[16].noidung_dapan}</Text>
+                {(part4.answers[16].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part4.answers[16].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part4.answers[16].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -405,13 +465,16 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes6ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part4.answers[17].noidung_dapan}</Text>
+                {(part4.answers[17].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part4.answers[17].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part4.answers[17].noidung_dapan}</Text> }
+              
               </CardItem>
 
               {/* Câu 7 */}
           
             <CardItem header>
-              <Text style={{fontSize:18}}>27. {part4.questions[6].noidung_cauhoi}</Text>
+              <Text style={styles.textQues}>27. {part4.questions[6].noidung_cauhoi}</Text>
             </CardItem>
               <CardItem style={{}}>
                 <CheckBox
@@ -419,7 +482,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes7OnePress()}
                   style={{marginRight:20}}
                 />
-                <Text>A {part4.answers[18].noidung_dapan}</Text>
+                {(part4.answers[18].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>A {part4.answers[18].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>A {part4.answers[18].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -427,7 +493,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes7TwoPress()}
                   style={{marginRight:20}}
                 />
-                <Text>B {part4.answers[19].noidung_dapan}</Text>
+                {(part4.answers[19].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>B {part4.answers[19].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>B {part4.answers[19].noidung_dapan}</Text> }
+                
               </CardItem>
               <CardItem Body>
                 <CheckBox 
@@ -435,7 +504,10 @@ const Part4 = ({ route, navigation }) =>{
                   onPress= {() => qes7ThreePress()}
                   style={{marginRight:20}}
                 />
-              <Text>C {part4.answers[20].noidung_dapan}</Text>
+                {(part4.answers[20].dapan == 1 && checkAnswer) ? (
+                  <Text style={{color:'red'}}>C {part4.answers[20].noidung_dapan}</Text>
+                ) : <Text style={styles.textAnswers}>C {part4.answers[20].noidung_dapan}</Text> }
+              
               </CardItem>
           </Card>
           
@@ -460,6 +532,14 @@ const styles = StyleSheet.create({
   label: {
     margin: 8,
   },
+  textAnswers: {
+    color:'#000',
+    fontSize: 16
+  },
+   textQues: {
+    color:'#000',
+    fontSize: 18
+   }
 });
 
 export default Part4;

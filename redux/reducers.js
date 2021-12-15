@@ -35,7 +35,8 @@ import {
   CHANGE_CLEAN_P11,
   CHANGE_CLEAN_P12,
   CHANGE_CLEAN_P13,
-
+  SEE_ALL_ANSWER,
+  GET_LIST_ALL_DE_THI
 } from './actions';
 
 const initialState = {
@@ -43,6 +44,7 @@ const initialState = {
   userInf: null,
   mesLogin: null,
   AllLesson: [],
+  AllExam: [],
   AllPart: [],
   dataLessonShowNow:[],
   lessonDetail: [],
@@ -67,7 +69,7 @@ const initialState = {
   part7: [],
   part8: [],
   part9: [],
-  soundP9: '',
+  soundP9: null,
   part10: [],
   part11: [],
   part12: [],
@@ -83,7 +85,7 @@ const initialState = {
   pointPart5: 0,
   pointPart6: 0,
   pointPart7: 0,
-  pointPart9: 0,
+  pointPart8: 0,
   pointPart9: 0,
   pointPart10: 0,
   pointPart11: 0,
@@ -104,8 +106,7 @@ const initialState = {
   cleanAnswerP11: false,
   cleanAnswerP12: false,
   cleanAnswerP13: false,
-
-  timeLoad: 5400,
+  checkAnswer: false,
 };
 
 function booksReducer(state = initialState, action) {
@@ -127,10 +128,17 @@ function booksReducer(state = initialState, action) {
       return {...state };
     }
     case SIGN_UP_ACTION:{
-      return { ...state , mesRegister: action.payload.success, mesErr: action.payload.error };
+      state.mesRegister = action.payload.success;
+      if(action.payload.success == false){
+        state.mesErr = action.payload.error;
+      }
+      return { ...state };
     }
     case GET_ALL_LESSON:
     return { ...state, AllLesson: action.payload };
+
+    case GET_LIST_ALL_DE_THI:
+    return { ...state, AllExam: action.payload };
 
     case DATA_LESSON_SHOW: {
       state.dataLessonShowNow= action.payload;
@@ -142,7 +150,6 @@ function booksReducer(state = initialState, action) {
       };
     }
     case GET_ALL_DE_THI: {
-      state.timeLoad = 4500;
       return { ...state, AllPart: action.payload, part1: action.payload.part1, part2: action.payload.part2,
         part3dot1: action.payload.part3dot1, part3dot2: action.payload.part3dot2, 
         part4: action.payload.part4, part5: action.payload.part5, 
@@ -230,6 +237,7 @@ function booksReducer(state = initialState, action) {
       state.cleanAnswerP12= true;
       state.cleanAnswerP13= true;
 
+      state.checkAnswer= false;
       return {...state };
     }
 
@@ -287,6 +295,10 @@ function booksReducer(state = initialState, action) {
     }
     case CHANGE_CLEAN_P13: {
       state.cleanAnswerP13= false;
+      return {...state };
+    }
+    case SEE_ALL_ANSWER: {
+      state.checkAnswer= true;
       return {...state };
     }
     default:

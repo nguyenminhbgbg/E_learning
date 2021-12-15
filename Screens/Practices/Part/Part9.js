@@ -2,77 +2,44 @@ import React, { useState, useEffect} from 'react';
 import { Container, Card, CardItem,CheckBox} from 'native-base';
 import { ScrollView,TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import FitImage from "react-native-fit-image";
+import SoundPlayer from 'react-native-sound';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { savePointP9 , changeCleanP9 } from '../../../redux/actions';
+import { useAudioHelper } from '../../../helpers/audio-helper';
 import Slider from '@react-native-community/slider';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-var Sound = require('react-native-sound');
-Sound.setCategory('Playback');
-var audio = new Sound(
-  'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3',
-  null,
-  error => {
-    if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-    // if loaded successfully
-    console.log(
-      'duration in seconds: ' +
-        audio.getDuration() +
-        'number of channels: ' +
-        audio.getNumberOfChannels(),
-    );
-  },
-);
-const Part9 = ({ route, navigation }) =>{
-  
-  const [playing, setPlaying] = useState();
-  const [currentTime, setCurrentTime] = useState(0);
-  
-  React.useEffect(() => {
-      const interval = setInterval(() => {
-          if (audio ) {
-              audio.getCurrentTime((seconds) => {
-                  setCurrentTime(seconds);
-              })
-          }
-      }, 100);
-      return () => clearInterval(interval);
+const Part9 = ({ route, navigation }) =>{  
+  const player = useAudioHelper({
+    listSounds: [{
+      type: 'network',
+      path: `https://nikaws.cf/datafordb/y1FKc5FDZVtUycyKyJuyQwUyWVPkW0c2AQkE7Gvh.mp3`,
+      name: "P9",
+    }],
+    timeRate: 15,
+    isLogStatus: true,
   });
-  useEffect(() => {
-    audio.setVolume(1);
-    return () => {
-      audio.release();
-    };
-  }, []);
-  const playPause = () => {
-    if (audio.isPlaying()) {
-      audio.pause();
-      setPlaying(false);
-    } else {
-      setPlaying(true);
-      audio.play(success => {
-        if (success) {
-          setPlaying(false);
-          console.log('successfully finished playing');
-        } else {
-          setPlaying(false);
-          console.log('playback failed due to audio decoding errors');
-        }
-      });
-    }
-  };
+
   const dispatch = useDispatch();
   const SavePointP9 = (point) => dispatch(savePointP9(point));
   const ChangeCleanP9 = () => dispatch(changeCleanP9());
+  const [clean, setClean] = useState(null);
+
   useEffect(() => {
-    if(cleanAnswerP9 == true){
+    setClean(cleanAnswerP9);
+    if(clean == true){
       ChangeCleanP9();
+      setQes1One(false) , setQes1Two(false), setQes1Three(false);
+      setQes2One(false) , setQes2Two(false), setQes2Three(false);
+      setQes3One(false) , setQes3Two(false), setQes3Three(false);
+      setQes4One(false) , setQes4Two(false), setQes4Three(false);
+      setQes5One(false) , setQes5Two(false), setQes5Three(false);
     }
-  }, [cleanAnswerP9]);
+    console.log(`https://nikaws.cf/${ soundP9 }`);
+    console.log(player);
+
+  });
 
   const [qes1One, setQes1One] = useState(false);
   const [qes1Two, setQes1Two] = useState(false);
@@ -220,7 +187,7 @@ const Part9 = ({ route, navigation }) =>{
     SavePointP9(points);
     
   };
-  const {part9,soundP9, cleanAnswerP9 } = useSelector(state => state.mainReducer);
+  const {part9,soundP9, cleanAnswerP9, checkAnswer } = useSelector(state => state.mainReducer);
 
   return (
     <Container>
@@ -229,7 +196,6 @@ const Part9 = ({ route, navigation }) =>{
           <FitImage
             indicator={false} // disable loading indicator
             indicatorColor="white" // react native colors or color codes like #919191
-            indicatorSize="integer" // (small | large) or integer
             style={styles.fitImage}
             source={{
               uri:`https://nikaws.cf/${
@@ -239,28 +205,44 @@ const Part9 = ({ route, navigation }) =>{
 
           <View style={styles.container}>
               <View style={styles.progressBar}>
-                  <TouchableOpacity style={styles.playBtn} onPress={playPause}>
-                  <Ionicons
-                    name={playing ? 'ios-pause-outline' : 'ios-play-outline'}
-                    size={36}
-                    color={'#fff'}
+                  {
+                    player.status === 'play' ?
+                        <TouchableOpacity
+                            onPress={player.pause}
+                            style={{marginHorizontal:20}}
+                        >
+                            <FontAwesomeIcon
+                                name='pause'
+                                color='white'
+                                size={25}
+                            />
+                        </TouchableOpacity> :
+                        <TouchableOpacity
+                            onPress={player.play}
+                            style={{marginHorizontal:20}}
+                        >
+                            <FontAwesomeIcon
+                                name='play'
+                                color='white'
+                                size={25}
+                            />
+                        </TouchableOpacity>
+                  }
+                  <Text style={styles.progressBarText}>{player.currentTimeString}</Text>
+                  <Slider
+                      style={{width: '50%', height: 40}}
+                      minimumValue={0}
+                      maximumValue={player.duration}
+                      value={player.currentTime}
+                      minimumTrackTintColor="#FFFFFF"
+                      maximumTrackTintColor="gray"
+                      thumbTintColor='#FFFFFF'
+                      onTouchStart={player.pause}
+                      onTouchEnd={player.play}
+                      disabled={true}
+                      // onSlidingComplete={(seconds) => player.seekToTime(seconds)}
                   />
-                  </TouchableOpacity>
-                  <Text style={styles.progressBarText}>Time 0</Text>
-                      <Slider
-                          style={{width: '50%', height: 40}}
-                          minimumValue={0}
-                          maximumValue={audio.getDuration()}
-                          value={currentTime}
-                          minimumTrackTintColor="#FFFFFF"
-                          maximumTrackTintColor="gray"
-                          thumbTintColor='#FFFFFF'
-                          // onTouchStart={player.pause}
-                          // onTouchEnd={player.play}
-                          disabled={true}
-                          // onSlidingComplete={(seconds) => player.seekToTime(seconds)}
-                      />
-                    <Text style={styles.progressBarText}>Time 1</Text>
+                  <Text style={styles.progressBarText}>{player.durationString}</Text>
               </View>
           </View>
           </Card>
@@ -302,7 +284,10 @@ const Part9 = ({ route, navigation }) =>{
                           onPress= {() => qes1OnePress()}
                           style={{marginRight:20}}
                         />
-                        <Text style={styles.textAnswers}>A</Text>
+                        {(part9.answers[0].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>A</Text>
+                        ) : <Text style={styles.textAnswers}>A</Text> }
+                        
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -323,7 +308,10 @@ const Part9 = ({ route, navigation }) =>{
                           onPress= {() => qes1TwoPress()}
                           style={{marginRight:20}}
                         />
-                        <Text style={styles.textAnswers}>B</Text>
+                        {(part9.answers[1].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>B</Text>
+                        ) : <Text style={styles.textAnswers}>B</Text> }
+                        
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -344,7 +332,10 @@ const Part9 = ({ route, navigation }) =>{
                           onPress= {() => qes1ThreePress()}
                           style={{marginRight:20}}
                         />
-                        <Text style={styles.textAnswers}>C</Text>
+                        {(part9.answers[2].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>C</Text>
+                        ) : <Text style={styles.textAnswers}>C</Text> }
+                        
                       </View>
                     </View>
                   </View>
@@ -380,7 +371,10 @@ const Part9 = ({ route, navigation }) =>{
                           onPress= {() => qes2OnePress()}
                           style={{marginRight:20}}
                         />
-                        <Text style={styles.textAnswers}>A</Text>
+                        {(part9.answers[3].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>A</Text>
+                        ) : <Text style={styles.textAnswers}>A</Text> }
+                        
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -400,7 +394,10 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes2TwoPress()}
                         style={{marginRight:20}}
                       />
-                        <Text style={styles.textAnswers}>B</Text>
+                      {(part9.answers[4].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>B</Text>
+                        ) : <Text style={styles.textAnswers}>B</Text> }
+                        
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -421,7 +418,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes2ThreePress()}
                         style={{marginRight:20}}
                       />
-                        <Text style={styles.textAnswers}>C</Text>
+                      {(part9.answers[5].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>C</Text>
+                        ) : <Text style={styles.textAnswers}>C</Text> }
                       </View>
                     </View>
                   </View>
@@ -457,7 +456,10 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes3OnePress()}
                         style={{marginRight:20}}
                       />
-                      <Text style={styles.textAnswers}>A</Text>
+                      {(part9.answers[6].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>A</Text>
+                        ) : <Text style={styles.textAnswers}>A</Text> }
+                      
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -477,7 +479,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes3TwoPress()}
                         style={{marginRight:20}}
                       />
-                        <Text style={styles.textAnswers}>B</Text>
+                      {(part9.answers[7].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>B</Text>
+                        ) : <Text style={styles.textAnswers}>B</Text> }
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -498,7 +502,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes3ThreePress()}
                         style={{marginRight:20}}
                       />
-                      <Text style={styles.textAnswers}>C</Text>
+                      {(part9.answers[8].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>C</Text>
+                        ) : <Text style={styles.textAnswers}>C</Text> }
                       </View>
                     </View>
                   </View>
@@ -534,7 +540,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes4OnePress()}
                         style={{marginRight:20}}
                       />
-                        <Text style={styles.textAnswers}>A</Text>
+                      {(part9.answers[9].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>A</Text>
+                        ) : <Text style={styles.textAnswers}>A</Text> }
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -554,7 +562,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes4TwoPress()}
                         style={{marginRight:20}}
                       />
-                      <Text style={styles.textAnswers}>B</Text>
+                      {(part9.answers[10].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>B</Text>
+                        ) : <Text style={styles.textAnswers}>B</Text> }
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -575,7 +585,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes4ThreePress()}
                         style={{marginRight:20}}
                       />
-                      <Text style={styles.textAnswers}>C</Text>
+                      {(part9.answers[11].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>C</Text>
+                        ) : <Text style={styles.textAnswers}>C</Text> }
                       </View>
                     </View>
                   </View>
@@ -611,7 +623,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes5OnePress()}
                         style={{marginRight:20}}
                       />
-                      <Text style={styles.textAnswers}>A</Text>
+                      {(part9.answers[12].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>A</Text>
+                        ) : <Text style={styles.textAnswers}>A</Text> }
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -631,7 +645,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes5TwoPress()}
                         style={{marginRight:20}}
                       />
-                      <Text style={styles.textAnswers}>B</Text>
+                      {(part9.answers[13].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>B</Text>
+                        ) : <Text style={styles.textAnswers}>B</Text> }
                       </View>
                     </View>
                     <View style={{ width: "33%", alignItems: "center" }}>
@@ -652,7 +668,9 @@ const Part9 = ({ route, navigation }) =>{
                         onPress= {() => qes5ThreePress()}
                         style={{marginRight:20}}
                       />
-                        <Text style={styles.textAnswers}>C</Text>
+                      {(part9.answers[14].dapan == 1 && checkAnswer) ? (
+                          <Text style={{color:'red'}}>C</Text>
+                        ) : <Text style={styles.textAnswers}>C</Text> }
                       </View>
                     </View>
                   </View>
@@ -752,9 +770,6 @@ const styles = StyleSheet.create({
   textStyle: {
     flex: 1,
     padding: 5,
-  },
-  playBtn: {
-    padding: 15,
   },
 });
 

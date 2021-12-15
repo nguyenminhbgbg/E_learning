@@ -72,7 +72,7 @@ export function DrawerContent(props){
                                 null
                             }
                         </View>
-                         <View style={styles.row}>
+                         {/* <View style={styles.row}>
                             <View style={styles.section}>
                                 <Paragraph style={[styles.paragraph, styles.caption]}>80</Paragraph>
                                 <Caption style={styles.caption}>Following</Caption>
@@ -81,7 +81,7 @@ export function DrawerContent(props){
                                 <Paragraph style={[styles.paragraph, styles.caption]}>100</Paragraph>
                                 <Caption style={styles.caption}>Followers</Caption>
                             </View>
-                        </View>
+                        </View> */}
                     </View>
                     <Drawer.Section style={styles.drawerContent}>
                         <DrawerItem
@@ -125,9 +125,10 @@ export function DrawerContent(props){
                             )}
                             label="Support"
                             onPress={() => {props.navigation.navigate('SupportScreen')}}
+
                         />
                 </Drawer.Section>
-                <Drawer.Section title="Preferences">
+                {/* <Drawer.Section title="Preferences">
                     <TouchableRipple onPress ={() =>{toggleTheme()}}>
                         <View style={styles.preference}>
                             <Text>Dark Theme</Text>
@@ -136,7 +137,7 @@ export function DrawerContent(props){
                             </View>
                         </View>
                     </TouchableRipple>
-                </Drawer.Section>
+                </Drawer.Section> */}
                 </View>
                 
             </DrawerContentScrollView>

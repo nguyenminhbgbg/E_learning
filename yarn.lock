@@ -6796,6 +6796,11 @@
   "resolved" "https://registry.npmjs.org/react-native-sound/-/react-native-sound-0.11.0.tgz"
   "version" "0.11.0"
 
+"react-native-table-component@^1.2.1":
+  "integrity" "sha512-sapwO0bONfQtpWg3GVMwP5D3lGEJlxPB3c7fb0soXBynvCa+SBktacVZ9OmYJnIbRJ3uW5pS4tzNc8GmE+UScw=="
+  "resolved" "https://registry.npmjs.org/react-native-table-component/-/react-native-table-component-1.2.1.tgz"
+  "version" "1.2.1"
+
 "react-native-unimodules@~0.12.0":
   "integrity" "sha512-/c1d3hr+3C3yIwhSoX+KTzy0+C9cnjUvenXP2uV8X2V3ZflnPB/HQXwZPHHWITmD89HP2n3NcPBTu4UgOv/KzQ=="
   "resolved" "https://registry.npmjs.org/react-native-unimodules/-/react-native-unimodules-0.12.0.tgz"

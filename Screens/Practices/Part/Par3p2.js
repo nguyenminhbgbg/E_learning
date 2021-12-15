@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -6,6 +6,9 @@ import {
   StyleSheet,
   Text,
   View,
+  FlatList,
+  TouchableWithoutFeedback,
+  Keyboard
 } from "react-native";
 import { Container, Card, CardItem,CheckBox} from 'native-base';
 import FitImage from "react-native-fit-image";
@@ -14,7 +17,7 @@ import { savePointP3p2 ,changeCleanP3p2 } from '../../../redux/actions';
 import { useSelector, useDispatch } from 'react-redux';
 const Part3p2 = ({ navigation }) => {
   
-    const {part3dot2, cleanAnswerP3p2 } = useSelector(state => state.mainReducer);
+    const {part3dot2, cleanAnswerP3p2, checkAnswer } = useSelector(state => state.mainReducer);
     const dispatch = useDispatch();
     const SavePointP3p2 = (point) => dispatch(savePointP3p2(point));
     const ChangeCleanP3p2 = () => dispatch(changeCleanP3p2());
@@ -22,7 +25,6 @@ const Part3p2 = ({ navigation }) => {
     const [listPartDocumentArray, setListPartDocumentArray] = React.useState([]);
     const [questions, setQuestions] = React.useState([]);
     const [answers, setAnswers] = React.useState([]);
-
     const [office_answer, SetOffice_answer] = React.useState("");
 
     const [value1, setValue1] = React.useState("");
@@ -30,6 +32,11 @@ const Part3p2 = ({ navigation }) => {
     const [value3, setValue3] = React.useState("");
     const [value4, setValue4] = React.useState("");
     const [value5, setValue5] = React.useState("");
+    const txtVa1Ref = useRef();
+    const txtVa2Ref = useRef();
+    const txtVa3Ref = useRef();
+    const txtVa4Ref = useRef();
+    const txtVa5Ref = useRef();
 
     useEffect(() => {
         setListPartDocumentArray(part3dot2.listPartDocumentArray);
@@ -39,20 +46,20 @@ const Part3p2 = ({ navigation }) => {
         if(cleanAnswerP3p2 == true){
           ChangeCleanP3p2();
         }
-      }, [part3dot2, cleanAnswerP3p2]);
-
-      useEffect(() => {
         let office_answer = [];
         let tmp_char = 65;
 
         // String.fromCharCode(65)
-        answers.forEach((element) => {
+        part3dot2.answers.forEach((element) => {
           if (element.dapan === 1) {
             office_answer.push(String.fromCharCode(tmp_char));
           }
           ++tmp_char;
         });
         SetOffice_answer(office_answer);
+      }, [part3dot2, cleanAnswerP3p2]);
+
+      useEffect(() => {
         if(value1!= "" || value2 !="" || value3!= "" || value4 != "" || value5 != "" ){
           checkAnswers();
         }
@@ -96,99 +103,139 @@ const Part3p2 = ({ navigation }) => {
         setValue5(text)
     };
     return (
+      <TouchableWithoutFeedback
+          style={styles.container}
+          onPress={Keyboard.dismiss}
+      >
       <SafeAreaView  style={{ marginBottom: 20 }}>
-        <ScrollView >
-          {/* img title past */}
-          <Card>
-            <FitImage
-              indicator={false} // disable loading indicator
-              indicatorColor="white" // react native colors or color codes like #919191
-              style={styles.fitImage}
-              source={{
-                uri:`https://nikaws.cf/${
-                  part3dot2.listPartDocumentArray[0].url
-                }`
-            }}/>
-          </Card>
-          
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ fontSize: 20, color: "blue" }}>Điền đáp án:</Text>
-            <View
-              style={{
-                flexDirection: "row",
-              }}
-            >
-              <View>
-                <View style={{ margin: 5 }}>
-                  <Text style={{ marginHorizontal: 10 }}>Câu 16</Text>
+          <ScrollView >
+            {/* img title past */}
+            <Card>
+              <FitImage
+                indicator={false} // disable loading indicator
+                indicatorColor="white" // react native colors or color codes like #919191
+                style={styles.fitImage}
+                source={{
+                  uri:`https://nikaws.cf/${
+                    part3dot2.listPartDocumentArray[0].url
+                  }`
+              }}/>
+            </Card>
+            
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text style={{ fontSize: 20, color: "blue" }}>Điền đáp án:</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                }}
+              >
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 16</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue1}
+                    value={cleanAnswerP3p2 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa2Ref.current.focus()}
+                    ref={txtVa1Ref}
+                  />
                 </View>
-                <TextInput
-                  style={styles.inPutAnsew}
-                  underlineColorAndroid="transparent"
-                  autoCapitalize="none"
-                  onChangeText={handelValue1}
-                  value={cleanAnswerP3p2 ? "" : null}
-                />
-              </View>
-              <View>
-                <View style={{ margin: 5 }}>
-                  <Text style={{ marginHorizontal: 10 }}>Câu 17</Text>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 17</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue2}
+                    value={cleanAnswerP3p2 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa3Ref.current.focus()}
+                    ref={txtVa2Ref}
+                  />
                 </View>
-                <TextInput
-                  style={styles.inPutAnsew}
-                  underlineColorAndroid="transparent"
-                  autoCapitalize="none"
-                  onChangeText={handelValue2}
-                  value={cleanAnswerP3p2 ? "" : null}
-                />
-              </View>
-              <View>
-                <View style={{ margin: 5 }}>
-                  <Text style={{ marginHorizontal: 10 }}>Câu 18</Text>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 18</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue3}
+                    value={cleanAnswerP3p2 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa4Ref.current.focus()}
+                    ref={txtVa3Ref}
+                  />
                 </View>
-                <TextInput
-                  style={styles.inPutAnsew}
-                  underlineColorAndroid="transparent"
-                  autoCapitalize="none"
-                  onChangeText={handelValue3}
-                  value={cleanAnswerP3p2 ? "" : null}
-                />
-              </View>
-              <View>
-                <View style={{ margin: 5 }}>
-                  <Text style={{ marginHorizontal: 10 }}>Câu 19</Text>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 19</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue4}
+                    value={cleanAnswerP3p2 ? "" : null}
+                    returnKeyType="next"
+                    onSubmitEditing={() => txtVa5Ref.current.focus()}
+                    ref={txtVa4Ref}
+                  />
                 </View>
-                <TextInput
-                  style={styles.inPutAnsew}
-                  underlineColorAndroid="transparent"
-                  autoCapitalize="none"
-                  onChangeText={handelValue4}
-                  value={cleanAnswerP3p2 ? "" : null}
-                />
-              </View>
-              <View>
-                <View style={{ margin: 5 }}>
-                  <Text style={{ marginHorizontal: 10 }}>Câu 20</Text>
+                <View>
+                  <View style={{ margin: 5 }}>
+                    <Text style={{ marginHorizontal: 10 }}>Câu 20</Text>
+                  </View>
+                  <TextInput
+                    style={styles.inPutAnsew}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                    onChangeText={handelValue5 }
+                    value={cleanAnswerP3p2 ? "" : null}
+                    returnKeyType="go"
+                    ref={txtVa5Ref}
+                  />
                 </View>
-                <TextInput
-                  style={styles.inPutAnsew}
-                  underlineColorAndroid="transparent"
-                  autoCapitalize="none"
-                  onChangeText={handelValue5 }
-                  value={cleanAnswerP3p2 ? "" : null}
-                />
+                {/* //tạm thế  */}
               </View>
-              {/* //tạm thế  */}
             </View>
-          </View>
-        </ScrollView>
-    </SafeAreaView>
+            {checkAnswer ? (
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text style={{ fontSize: 20, color: "blue" , marginVertical: 5}}>Đáp án</Text>
+                  <FlatList
+                      data={office_answer}
+                      keyExtractor={({ id }, index) => id}
+                      horizontal
+                      renderItem={({ item }) => (
+                        <View style={{flexDirection:'row'}}>
+                          <Text style={{ marginHorizontal: 28, flex:1 ,color: "#000", fontSize: 17, margin: 5, textAlign: "center", alignItems:'center'}}>
+                            {item}
+                          </Text>
+                        </View>
+                      )}
+                    />
+                </View>
+                ) : null }
+          </ScrollView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+      
     );
   }
   
 export default Part3p2;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1, 
+  },
   img: {
     width: 64,
     height: 64,

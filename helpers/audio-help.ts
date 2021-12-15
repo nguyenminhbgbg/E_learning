@@ -72,8 +72,6 @@ export function useAudioHelper(request: IUseAudioHelper = {
 
     function initialize() {
         setStatus('loading');
-        setStatus('pause');
-        
         if (listSounds.length > 0) {
             if (player) {
                 player.release();
@@ -89,8 +87,7 @@ export function useAudioHelper(request: IUseAudioHelper = {
                 }
                 player.setSpeed(speed);
                 setDuration(player.getDuration());
-                // play(player);
-                player.pause();
+                play(player);
             }
 
             const currentAudio = listSounds[index];
@@ -310,6 +307,9 @@ export function useAudioHelper(request: IUseAudioHelper = {
     function getCurrentAudioName() {
         return listSounds[index].name;
     }
+    function getCurrentAudioPath() {
+        return listSounds[index].path;
+    }
 
     function isDisabledButtonPlay() {
         return status === 'loading' || status === 'play';
@@ -352,6 +352,7 @@ export function useAudioHelper(request: IUseAudioHelper = {
         durationString: getDurationString(),
         currentTimeString: getCurrentTimeString(),
         currentAudioName: getCurrentAudioName(),
+        currentAudioPath: getCurrentAudioPath(),
         isDisabledButtonPlay: isDisabledButtonPlay(),
         isDisabledButtonPause: isDisabledButtonPause(),
         isDisabledButtonStop: isDisabledButtonStop(),

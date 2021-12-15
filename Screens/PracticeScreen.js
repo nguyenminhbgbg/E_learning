@@ -1,93 +1,121 @@
-import React, { Component } from 'react';
-import { View, Text,Image,StyleSheet,TouchableOpacity,ScrollView, ImageBackground } from 'react-native';
+import React, {useEffect} from "react";
+import { View, Text,Image,StyleSheet,TouchableOpacity,ScrollView, ImageBackground, FlatList } from 'react-native';
 import ListToppic from './Practices/ListToppic';
 import * as Animatable from 'react-native-animatable';
-export default class ExploreScreen extends Component {
-  constructor(props){
-    super(props)
-  }
-  render() {
+import { useSelector, useDispatch } from 'react-redux';
+import { getListAllDeThi } from '../redux/actions';
+function ExploreScreen({ navigation }) {
+    const { AllExam } = useSelector(state => state.mainReducer);
+    const dispatch = useDispatch();
+    const GetAllExam = () => dispatch(getListAllDeThi());
+
+    useEffect(() => {
+      GetAllExam();
+    }, []);
+
+    const renderItem = ({ item }) => {
+      return(
+          <TouchableOpacity
+              onPress={() => navigation.navigate("PracticeTopics", {
+                exam: item
+            })}
+              style={{
+                  flexDirection:"row",
+                  backgroundColor:"#fdddf3",
+                  padding:20,
+                  marginHorizontal:20,
+                  borderRadius:20,
+                  alignItems:"center",
+                  marginTop:10
+              }}
+          >
+                  <Image
+                      source={require('../images/unicorn1.png')}
+                      style={{width:40,height:40}}
+                  />
+
+                  <View>
+                      <Text style={{
+                          alignContent:'center',
+                          color:"#345c74",
+                          fontFamily:"Bold",
+                          fontSize:13,
+                          paddingHorizontal:20,
+                          width:170
+                      }}>Đề {item.id}: {item.name}</Text>
+                      
+                  </View>
+                  <Text style={{
+                      color:"#345c74",
+                      fontFamily:"Medium",
+                      fontSize:13,
+                      paddingLeft:10,
+                      paddingRight:10
+                  }}>
+                      Bắt đầu!!
+                  </Text>
+          </TouchableOpacity>
+      )
+    }
+
     return (
         <ImageBackground
-      source={require('../images/background4.jpg')}
-      style={{width:"100%", height:"100%"}}
-      >
-      <View
-          style={{
-            height:200,
-            width:"100%",
-            //paddingTop:40,
-            alignItems:'center',
-          }}>
-          <Text style={{
-              paddingVertical:10,
-              fontSize:35,
-              //paddingTop:40,
-              fontFamily:"Bold",
-              color:"#FFF"
-          }}>
-          luyện đề thi!!!
-          </Text>
-          <Text style={{
-              fontSize:20,
-              color:"#FFF"
-          }}>
-          ĐH CNTT!!!
-          </Text>
-          <Image
-            source={require('../images/unicorn1.png')}
-            style={{height:50,width:50}}
-        />
-        </View>
-
-      <Animatable.View
-          animation="fadeInUpBig"
-          style={styles.footer}
-      >
-          <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{
-            height:"100%",
-          }}>
-              <View style={{
-              backgroundColor:'#FFf',
-              borderTopLeftRadius:60,
-              borderTopRightRadius:60,
-              height:1000,
-            }}>
-              <Text
-                  style={{
-                    paddingLeft:25,
-                    marginTop:18,
-                    color:'#000',
-                    fontSize:20,
-                    }}>
-                    DANH SÁCH ĐỀ THI:
+          source={require('../images/background4.jpg')}
+          style={{width:"100%", height:"100%"}}
+          >
+          <View
+              style={{
+                height:200,
+                width:"100%",
+                //paddingTop:40,
+                alignItems:'center',
+              }}>
+              <Text style={{
+                  paddingVertical:10,
+                  fontSize:35,
+                  //paddingTop:40,
+                  fontFamily:"Bold",
+                  color:"#FFF"
+              }}>
+              ĐỀ THI ÔN LUYỆN
               </Text>
+              <Text style={{
+                  fontSize:20,
+                  color:"#FFF"
+              }}>
+              ĐH CNTT&TT
+              </Text>
+              <Image
+                source={require('../images/unicorn1.png')}
+                style={{height:50,width:50}}
+            />
+            </View>
+            <Animatable.View
+                animation="fadeInUpBig"
+                style={styles.footer}
+                >
+                <View style={{
+                    backgroundColor:'#FFf',
+                    borderTopLeftRadius:60,
+                    borderTopRightRadius:60,
+                    }}>
+                
                 <View>
-                  <ListToppic
-                  img={require('../images/unicorn1.png')}
-                  title="Đề 1: KHỞI ĐỘNG THẾ GIỚI"
-                  bg="#fdddf3"
-                  onPress={()=>this.props.navigation.navigate("PracticeTopics", {itemId: 1,data: "Đề 1: KHỞI ĐỘNG THẾ GIỚI"})}
-                />
-                <ListToppic
-                  onPress={()=>this.props.navigation.navigate("PracticeTopics", {itemId: 2,data: "Đề 2: KHỞI ĐỘNG THẾ GIỚI"})}
-                  img={require('../images/unicorn1.png')}
-                  title="Đề 2: KHỞI ĐỘNG THẾ GIỚI"
-                  bg="#fdddf3"
+                <FlatList
+                    data={AllExam}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={renderItem}
+                    showsVerticalScrollIndicator={false}
                 />
                 </View>
-            </View>
-          </ScrollView>
-            
-      </Animatable.View>
-      
-    </ImageBackground>
-        
+            </View>                
+          </Animatable.View>
+          
+        </ImageBackground>
     );
-  }
+  
 }
+export default ExploreScreen;
 
 const styles = StyleSheet.create({
   container: {
